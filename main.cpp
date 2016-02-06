@@ -10,6 +10,8 @@ Date                Comment
 ----                ------------------------------
 Feb 2, 2016         Started file structure, file parsing
 Feb 3, 2016			Finished file parsing, untested
+Feb 5, 2016			Finished network training code
+Feb 6, 2016			Finished code for neural network file I/O
 ******************************************************************************/
 
 #include <iostream>

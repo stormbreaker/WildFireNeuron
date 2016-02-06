@@ -9,25 +9,65 @@ using namespace std;
 class Neuron_Layer
 {
   public:
+	/*
+	**Initialize layer with given node size
+	*/
     Neuron_Layer(int nodes);
+
+	/*
+	**Deallocate entire network
+	*/
    ~Neuron_Layer();
 
+	/*
+	**Number of nodes in this network layer
+	*/
     int Num_nodes();
+
+	/*
+	**Is this the first layer in network?
+	*/
     bool Is_head();
+
+	/*
+	**Is this the last layer in network?
+	*/
     bool Is_tail();
 
+	/*
+	**Add a new layer to the end of the network
+	*/
     void Attach(Neuron_Layer* new_layer );
 
-    bool Save_network(ofstream network_out, int layer = 1);
+	/*
+	**Save network to text file
+	*/
+    bool Save_network(ofstream& network_out);
 
-    bool Load_network(ifstream network_in);
+	/*
+	**Load network from text file
+	*/
+    bool Load_network(ifstream& network_in);
 
+	/*
+	**Run a set of inputs through the network
+	*/
     vector<double> Run(vector<double> &input);
+
+	/*
+	**Run inputs and train on expected results
+	*/
     vector<double> Run_and_Condition(vector<double> &input, vector<double> &expected);
 
-  //protected:
+  protected:
+	/*
+	**Activation funtion
+	*/
     static double Log_sigmoid(double t);
 	
+	/*
+	**Learn from expected results
+	*/
     void Learn(vector<double> &expected);
     
 	/*
