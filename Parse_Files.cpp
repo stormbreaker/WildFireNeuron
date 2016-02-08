@@ -10,19 +10,7 @@ Date				Comment
 ----				------------------------------
 Feb 2, 2016			Started file,
 ******************************************************************************/
-/*
-#include <vector>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include "main.cpp"
-*/
-
-/******************************************************************************
-						Function Prototypes
-******************************************************************************/
-void parse_csv( ifstream& PDSI, vector< vector<float> >& all_data );
-void parse_param( ifstream& PARAMS );
+#include "Parse_Files.h"
 
 /******************************************************************************
 Function:	 Parse CSV
@@ -32,24 +20,26 @@ Description: Parses a csv file to obtain year, burned acrage, and PDSI data
 	vector. Then a vector is used to store all years.
 Parameters:
 ******************************************************************************/
-void parse_csv( ifstream& PDSI, vector< vector<float> >& all_data )
+void parse_csv( char* pdsi_file, vector< vector<float> >& all_data )
 {
-	float data_val;							// convert from line read in to a float
+	//float data_val;							// convert from line read in to a float
 
 	string line;							// line read in from file
 	
+	ifstream pdsi;	
+
 	// Open PDSI file
-	PDSI.open();
+	pdsi.open( pdsi_file );
 
 	// Check if file opened
-	if( !PDSI )
+	if( !pdsi )
 	{
 		printf( "Data file could not be opened. Exiting. \n" );
 		return;
 	}
 
 	// Read in information, ignore non-date lines
-	while( getline( PDSI, line ) )
+	while( getline( pdsi, line ) )
 	{
 		if( ( 0 == line.compare( 0, 1, "1" ) ) || ( 0 == line.compare( 0, 1, "2") ) )
 		{
@@ -57,12 +47,16 @@ void parse_csv( ifstream& PDSI, vector< vector<float> >& all_data )
 			vector <float> year_vals;
 
 			// parse line to break it up at commas
+			year_vals = split_string( line, ',' );
+			
+			/*
 			while( getline( line, data, ',' ) )
 			{	
 				data_val = stof( data );
 				year_vals.push_back( data_val );
 			}
-			
+			*/
+
 			// add line to all known data values
 			all_data.push_back( year_vals );
 		}
@@ -71,7 +65,7 @@ void parse_csv( ifstream& PDSI, vector< vector<float> >& all_data )
 	}
 
 	// Close file
-	PDSI.close();
+	pdsi.close();
 	
 	return;
 }
@@ -82,20 +76,21 @@ Author: 	 Stephanie Athow
 Description: Parses the given parameter file
 Parameters:
 ******************************************************************************/
-void parse_param( ifstream& PARAMS )
+void parse_param( char* param_file, Parameters param_vals )
 {
 	string line;
+	ifstream params_in;
 
-	PARAMS.open();
+	params_in.open( param_file );
 
 	// Check for file open
-	if( !PARAMS )
+	if( !params_in )
 	{
 		printf( "Parameter file could not be opened. Exiting. \n" );
 		return;
 	}
 
-	while( getline( PARAMS, line ) ) 
+	while( getline( params_in, line ) ) 
 	{
 		// ignore comments
 		if( 0 == line.compare( 0, 1, "#" ) )
@@ -103,7 +98,30 @@ void parse_param( ifstream& PARAMS )
 		
 		// store data
 	}
-
+	
+	params_in.close();
 	return;
 }
 
+
+/******************************************************************************
+Function:	 Split Strings
+Author: 	 Stephanie Athow
+Description: Parses the given parameter file
+Parameters:
+******************************************************************************/
+vector<float> split_string( string line, char delim )
+{
+	vector<float> data_values;				// holds data values to be returned
+	stringstream line_stream( line );		// turn into stream to use getline
+	string tok;								// holds return from getline
+	float val;								// holds float val converted from getline
+
+	while( getline( line_stream, tok, delim ) )
+	{
+		val = stof( tok );
+		data_values.push_back( val );
+	}
+
+	return data_values;
+}

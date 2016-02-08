@@ -20,23 +20,50 @@ Feb 6, 2016			Finished code for neural network file I/O
 #include <fstream>
 #include <string>
 
-#include "Parse_Files.cpp"
+#include "Parse_Files.h"
+#include "Neuron_Layer.h"
 
 using namespace std;
 
-int main(int argc, char argv[])
+int main(int argc, char *argv[])
 {
-	ifstream PARAMS;					// Parameter file passed in from args
-	ifstream PDSI;						// PDSI file read in from param file
+	char *param_file;					// Parameter file passed in from args
+
+	char *data_file;	// TEMPORARY FOR TESTING
+
+	Parameters param_vals;				// Values from parameter file
 
 	vector<vector<float> > all_data;	// Vector of vectors, contain PDSI data
 
+	// check for correct number of arguments
+	if ( argc !=2 )
+	{
+		printf( "Incorrect usage. Program expects one file name. Exiting. \n" );
+		return 1;
+	}
+	
+	// get name of parameter file
+	else
+	{
+		param_file = argv[1];
+		// TEMPORARY FOR TESTING
+		data_file = argv[1];
+	}
+
 	// parse parameter file
-	parse_param( PARAMS );	
+//	parse_param( param_file, param_vals );	
 
 	// parse PDSI csv file
-	parse_csv( PDSI, all_data );
+	parse_csv( data_file, all_data );
 
+	/*
+	// check correct reading of PDSI info
+	for ( vector<int> &vec : all_data )
+	{
+		for( int x : vec )
+			cout << x << ' ' << endl;
+	}
+*/
 
 	return 0;
 }
