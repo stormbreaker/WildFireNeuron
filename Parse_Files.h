@@ -13,8 +13,9 @@ Feb 2, 2016			Started file,
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include <string>
+#include <string.h>
 #include <sstream>
+#include <stdio.h>
 
 using namespace std;
 
@@ -23,8 +24,8 @@ using namespace std;
 ******************************************************************************/
 struct Parameters{
 
-	char* data_file;			// training and testing data file
-	char* weights_file;		// name of ANN weight file
+	char data_file[100];			// training and testing data file
+	char weights_file[100];		// name of ANN weight file
 
 	int adjustable_weight_layers;	// layers of adjustable weights
 	int classes;					// Number of classes for classification
@@ -49,7 +50,7 @@ struct Parameters{
 							  Function Prototypes
 ******************************************************************************/
 void parse_csv( char* pdsi_file, vector< vector<float> >& all_data );
-void parse_param( char*  params_file, Parameters param_vals );
+void parse_param( char*  params_file, Parameters *param_vals );
 
 vector<float> split_string( const string line, char delim );
 

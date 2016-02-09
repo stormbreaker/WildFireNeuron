@@ -25,15 +25,22 @@ Feb 6, 2016			Finished code for neural network file I/O
 
 using namespace std;
 
+
+typedef vector<float> Year;			// holds values for one year
+typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
+
+void output_data( const All_Data& data );
+
+
 int main(int argc, char *argv[])
 {
 	char *param_file;					// Parameter file passed in from args
 
-	char *data_file;	// TEMPORARY FOR TESTING
+//	char *data_file;	// TEMPORARY FOR TESTING
 
+	All_Data data;
+	
 	Parameters param_vals;				// Values from parameter file
-
-	vector<vector<float> > all_data;	// Vector of vectors, contain PDSI data
 
 	// check for correct number of arguments
 	if ( argc !=2 )
@@ -47,23 +54,46 @@ int main(int argc, char *argv[])
 	{
 		param_file = argv[1];
 		// TEMPORARY FOR TESTING
-		data_file = argv[1];
+		//data_file = argv[1];
 	}
 
 	// parse parameter file
-//	parse_param( param_file, param_vals );	
+	parse_param( param_file, &param_vals );	
 
 	// parse PDSI csv file
-	parse_csv( data_file, all_data );
+	cout<< "Data file name: " << param_vals.data_file << endl;
+	parse_csv( param_vals.data_file, data );
 
-	/*
 	// check correct reading of PDSI info
-	for ( vector<int> &vec : all_data )
-	{
-		for( int x : vec )
-			cout << x << ' ' << endl;
-	}
-*/
+//	output_data( data );	
+	
 
 	return 0;
 }
+
+/*
+	testing file parsing for pdsi
+*/
+void output_data( const All_Data& data )
+{
+	for( All_Data::const_iterator row = data.begin(); row != data.end(); ++row )
+	{
+		for( Year::const_iterator col = row->begin(); col != row->end(); ++col )
+			cout << *col << " ";
+		cout << endl;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
