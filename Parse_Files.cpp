@@ -81,10 +81,11 @@ Parameters:
 void parse_param( char* param_file, Parameters *param_vals )
 {
 	int pos;								// used in substring splitting
-	int lines_stored = 0;					// used to count the number of lines stored
+	int lines_stored = 0;					// used to count the number of lines stored and to "index" which line
 
-	string line;
-	string sub_line;						// used to temp store file names
+	string line;							//temp for an entire line
+	
+	string sub_line;						// used to temp store file names (weights and csv)
 	ifstream params_in;
 
 	params_in.open( param_file );
