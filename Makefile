@@ -33,11 +33,17 @@ CXXFLAGS = -g -std=c++11 -O -Wall
 # MAKE allows the use of "wildcards", to make writing compilation instructions
 # a bit easier. GNU make uses $@ for the target and $^ for the dependencies.
 
-all:    WildFireNeuron
+all:   ANNtrain ANNtest CrossValidate
 
 # specific targets
-WildFireNeuron:	main.o Parse_Files.o Neuron_Layer.o
+ANNtrain:	main_train.o Parse_Files.o Neuron_Layer.o
 	$(LINK) -o $@ $^ 
+
+ANNtest:	main_test.o Parse_Files.o Neuron_Layer.o
+	$(LINK) -o $@ $^
+
+CrossValidate: main_cross_validate.o Parse_Files.o Neuron_Layer.o
+	$(LINK) -o $@ $^
 
 # generic C and C++ targets for OpenGL programs consisting of only one file
 # type "make filename" (no extension) to build
