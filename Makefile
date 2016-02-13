@@ -36,7 +36,7 @@ CXXFLAGS = -g -std=c++11 -O -Wall
 all:   ANNtrain ANNtest CrossValidate
 
 # specific targets
-ANNtrain:	main_train.o Parse_Files.o Neuron_Layer.o
+ANNtrain:	main_train.o Parse_Files.o Neuron_Layer.o Normalization.o Randomize.o
 	$(LINK) -o $@ $^ 
 
 ANNtest:	main_test.o Parse_Files.o Neuron_Layer.o

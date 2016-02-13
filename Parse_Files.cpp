@@ -28,7 +28,7 @@ void parse_csv( char* pdsi_file, vector< vector<float> >& all_data )
 	
 	ifstream pdsi;	
 
-	cout << "parse csv pdsi file name: " << pdsi_file << endl;
+//	cout << "parse csv pdsi file name: " << pdsi_file << endl;
 
 	// Open PDSI file
 	pdsi.open( pdsi_file );

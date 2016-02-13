@@ -22,6 +22,7 @@ Feb 6, 2016			Finished code for neural network file I/O
 
 #include "Parse_Files.h"
 #include "Neuron_Layer.h"
+#include "Randomize.h"
 
 using namespace std;
 

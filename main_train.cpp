@@ -22,6 +22,8 @@ Feb 6, 2016			Finished code for neural network file I/O
 
 #include "Parse_Files.h"
 #include "Neuron_Layer.h"
+#include "Normalization.h"
+#include "Randomize.h"
 
 using namespace std;
 
@@ -61,13 +63,24 @@ int main(int argc, char *argv[])
 	parse_param( param_file, &param_vals );	
 
 	// parse PDSI csv file
-	cout<< "Data file name: " << param_vals.data_file << endl;
+//	cout<< "Data file name: " << param_vals.data_file << endl;
 	parse_csv( param_vals.data_file, data );
 
 	// check correct reading of PDSI info
 //	output_data( data );	
 	
+	// normalize data
+	normalize_pdsi( data );
+	normalize_burned_acres( data );
 
+//	printf( "after normalization: \n" );
+//	output_data( data );
+
+	// randomize data
+	randomize( data );
+//	printf("after randomization: \n" );
+//	output_data( data );
+	
 	return 0;
 }
 
@@ -76,10 +89,10 @@ int main(int argc, char *argv[])
 */
 void output_data( const All_Data& data )
 {
-	for( All_Data::const_iterator row = data.begin(); row != data.end(); ++row )
+	for( All_Data::const_iterator row = data.begin(); row != data.end(); row++ )
 	{
-		for( Year::const_iterator col = row->begin(); col != row->end(); ++col )
-			cout << *col << " ";
+		for( Year::const_iterator col = row->begin(); col != row->end(); col++ )
+			cout << *col << setw(5) << " ";
 		cout << endl;
 	}
 }
