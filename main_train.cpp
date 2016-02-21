@@ -79,8 +79,20 @@ int main(int argc, char *argv[])
 	// randomize data
 	randomize( data );
 //	printf("after randomization: \n" );
-//	output_data( data );
+	//output_data( data );
 
+	//slicing years off <--- this needs confirmed
+	/*
+	All_Data data_wo_yr;
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		for (int j = 1; j < data[i].size(); j++)
+		{
+			data_wo_yr[i][j] = data[i][j];
+		}
+	}
+	*/
 	//processing of net
 	/*
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0]);
@@ -100,9 +112,9 @@ int main(int argc, char *argv[])
 	{
 		//now we need to have something for training
 
-		for (int j = 0; j < data.size(); j++);
+		for (int j = 0; j < data_wo_yr.size(); j++);
 		{
-			net.Run_and_Condition(data[j], data[j])
+			net.Run_and_Condition(data_wo_yr[j], data_wo_yr[j])
 		}
 		//we need to save the weights
 
