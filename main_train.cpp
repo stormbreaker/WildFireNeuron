@@ -1,10 +1,10 @@
 /******************************************************************************
 Program:     Artifical Neural Networks - Wildfire Prediction
-Authors:     Stephanie Athow, Ben Kaiser, Marcus 
-Class:       CSC 447/547 (Artificial Inelligence) 
+Authors:     Stephanie Athow, Ben Kaiser, Marcus
+Class:       CSC 447/547 (Artificial Inelligence)
 Instructor:  Dr. John Weiss
 Due Date:    Feb 21, 2016
-Description: 
+Description:
 
 Date                Comment
 ----                ------------------------------
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 //	char *data_file;	// TEMPORARY FOR TESTING
 
 	All_Data data;
-	
+
 	Parameters param_vals;				// Values from parameter file
 
 	// check for correct number of arguments
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 		printf( "Incorrect usage. Program expects one file name. Exiting. \n" );
 		return 1;
 	}
-	
+
 	// get name of parameter file
 	else
 	{
@@ -60,15 +60,15 @@ int main(int argc, char *argv[])
 	}
 
 	// parse parameter file
-	parse_param( param_file, &param_vals );	
+	parse_param( param_file, &param_vals );
 
 	// parse PDSI csv file
 //	cout<< "Data file name: " << param_vals.data_file << endl;
 	parse_csv( param_vals.data_file, data );
 
 	// check correct reading of PDSI info
-//	output_data( data );	
-	
+//	output_data( data );
+
 	// normalize data
 	normalize_pdsi( data );
 	normalize_burned_acres( data );
@@ -91,10 +91,30 @@ int main(int argc, char *argv[])
 			layerpt = &layer;
 			net.attach(layerpt)
 		}
+
+	//at this point the net should be constructed
+
+	//everything I wrote here needs to be looped
+
+	for (int i = 0; i < param_vals.epochs; i++)
+	{
+		//now we need to have something for training
+
+		for (int j = 0; j < data.size(); j++);
+		{
+			net.Run_and_Condition(data[j], data[j])
+		}
+		//we need to save the weights
+
+		ofstream weights;
+		weights.open(weights_file);
+		net.Save_network(weights);
+
+	}
 	*/
-	//at this point the net should be built
-	
-	
+
+
+
 	return 0;
 }
 
@@ -110,17 +130,3 @@ void output_data( const All_Data& data )
 		cout << endl;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
