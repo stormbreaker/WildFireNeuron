@@ -80,6 +80,20 @@ int main(int argc, char *argv[])
 	randomize( data );
 //	printf("after randomization: \n" );
 //	output_data( data );
+
+	//processing of net
+	/*
+		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0]);
+		for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
+		{
+			Neuron_Layer* layerpt;
+			Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
+			layerpt = &layer;
+			net.attach(layerpt)
+		}
+	*/
+	//at this point the net should be built
+	
 	
 	return 0;
 }
