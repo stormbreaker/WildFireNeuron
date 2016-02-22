@@ -37,6 +37,7 @@ void output_data( const All_Data& data );
 int main(int argc, char *argv[])
 {
 	char *param_file;					// Parameter file passed in from args
+	vector<double> results;
 
 //	char *data_file;	// TEMPORARY FOR TESTING
 
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
 	//processing of net
 	/*
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0]);
-		for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
+		for (int i = 0; i < param_vals.adjustable_weight_layers; i++)
 		{
 			Neuron_Layer* layerpt;
 			Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
@@ -112,14 +113,14 @@ int main(int argc, char *argv[])
 	{
 		//now we need to have something for training
 
-		for (int j = 0; j < data_wo_yr.size(); j++);
+		for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the actual code is wrong
 		{
-			net.Run_and_Condition(data_wo_yr[j], data_wo_yr[j])
+			results = net.Run_and_Condition(data_wo_yr[j], data_wo_yr[j])
 		}
 		//we need to save the weights
 
 		ofstream weights;
-		weights.open(weights_file);
+		weights.open(paramvals.weights_file);
 		net.Save_network(weights);
 
 	}
