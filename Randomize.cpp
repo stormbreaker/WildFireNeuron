@@ -8,7 +8,7 @@ Description:
 ******************************************************************************/
 #include "Randomize.h"
 
-void randomize( vector< vector<float> > & data )
+void randomize( vector< vector<double> > & data )
 {
 	// seeding for random number generator
 	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
@@ -17,3 +17,5 @@ void randomize( vector< vector<float> > & data )
 	shuffle( data.begin(), data.end(), default_random_engine( seed ) ); 
 	
 }
+
+

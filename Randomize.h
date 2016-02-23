@@ -15,5 +15,5 @@ Description:
 
 using namespace std;
 
-void randomize( vector< vector<float> > & data );
+void randomize( vector< vector<double> > & data );
 

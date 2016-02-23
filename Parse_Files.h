@@ -38,9 +38,9 @@ struct Parameters{
 
 	int nodes_per_layer[ 10 ];	// How many nodes are in each layer  of ANN
 
-	float learn_rate;			
-	float momentum;
-	float threshold_error;		// Threshold of ANN error - training cuttoff
+	double learn_rate;			
+	double momentum;
+	double threshold_error;		// Threshold of ANN error - training cuttoff
 								// or testing acceptance
 
 };
@@ -49,10 +49,10 @@ struct Parameters{
 /******************************************************************************
 							  Function Prototypes
 ******************************************************************************/
-void parse_csv( char* pdsi_file, vector< vector<float> >& all_data );
+void parse_csv( char* pdsi_file, vector< vector<double> >& all_data );
 void parse_param( char*  params_file, Parameters *param_vals );
 
-vector<float> split_string( const string line, char delim );
+vector<double> split_string( const string line, char delim );
 
 
 
