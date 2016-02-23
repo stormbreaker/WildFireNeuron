@@ -19,10 +19,8 @@ class Neuron_Layer
 	/*
 	**Initialize layer with given node size
 	*/
-    Neuron_Layer(int nodes);
+	Neuron_Layer(int nodes, Parameters &params);
     
-
-
 	/*
 	**Deallocate entire network
 	*/
@@ -99,6 +97,7 @@ class Neuron_Layer
 	*/
     vector< vector<double> > input_weights;
 
+    vector< vector<double> > prev_weights;
 	/*
 	**vector of results for the layers calculation
 	*/
@@ -108,6 +107,10 @@ class Neuron_Layer
 	**vector of delta values for back propagation (learning)
 	*/
 	vector<double> delta;
+
+    	float learn_rate;
+
+	float momentum;
 
 };
 

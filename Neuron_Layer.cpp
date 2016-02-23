@@ -1,5 +1,5 @@
 #include "Neuron_Layer.h"
-
+#include "Parse_Files.h"
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -20,11 +20,13 @@ Description: Creates a new layer of a neural network with a supplied number of
 Parameters: nodes - Amount of nodes (or neurons) that the network layer will 
                     have.
 ******************************************************************************/
-Neuron_Layer::Neuron_Layer(int nodes)
+Neuron_Layer::Neuron_Layer(int nodes, Parameters &params)
 {
     prev_layer = NULL;
     next_layer = NULL;
     num_nodes = nodes + 1;
+    learn_rate = params.learn_rate;
+	momentum = params.momentum;
     results.resize(num_nodes);
     delta.resize(num_nodes);
 }
@@ -35,8 +37,11 @@ Neuron_Layer::Neuron_Layer(int nodes, Neuron_Layer *prev)
     prev_layer = prev;
     next_layer = NULL;
     num_nodes = nodes;
+    learm_rate = prev_layer -> learn_rate;
+    momentum =  prev_layer -> momentum;
     results.resize(num_nodes);
     delta.resize(num_nodes);
+
 }
 
 /******************************************************************************
@@ -79,6 +84,7 @@ bool Neuron_Layer::Save_network(ofstream& network_out)
     }
     if (Is_head())
     {
+        network_out << learn_rate << " " << momentum << endl;
         return next_layer->Save_network(network_out); 
     }
     if (!network_out.good() || !network_out.is_open())
@@ -130,7 +136,8 @@ bool Neuron_Layer::Load_network(ifstream &netowork_in)
 
         int next_size = 0;
         int this_size = 0;
-        netowork_in >> next_size >> this_size;
+        network_in >> learn_rate >> momentum;
+        network_in >> next_size >> this_size;
         results.resize(this_size);
         Attach(next_size);
         return next_layer->Load_network(netowork_in);
@@ -216,29 +223,28 @@ Paramaters: input - vector of values to be processed through the network. Input
 ******************************************************************************/
 vector<double> Neuron_Layer::Run(vector<double> &input)
 {
-    if (Is_head())
-    {
-        results = input;
-        results.push_back(1);
-        if (Is_tail())
-            return results;
-        else
-            return next_layer->Run(input);
-    }
-    for (int x = 0; x < num_nodes; x++)
-    {
-        double sum = 0;
-        for (int y = 0; y < prev_layer->num_nodes; y++)
-        {
-            sum += prev_layer->results.at(y) * input_weights.at(x).at(y);
-        }
-        results.at(x) = Log_sigmoid(sum);
-    }
-    if (Is_tail())
-    {
-        return results;
-    }
-    return next_layer->Run(input);
+	if (Is_head())
+	{
+		results = input;
+		if (Is_tail())
+			return results;
+		else
+			return next_layer->Run(input);
+	}
+	for (int x = 0; x < num_nodes; x++)
+	{
+		double sum = 0;
+		for (int y = 0; y < prev_layer->num_nodes; y++)
+		{
+			sum += prev_layer->results.at(y) * input_weights.at(x).at(y);
+		}
+		results.at(x) = Log_sigmoid(sum);
+	}
+	if (Is_tail())
+	{
+		return results;
+	}
+	return next_layer->Run(input);
 }
 
 /******************************************************************************
@@ -260,31 +266,31 @@ Paramaters: input - vector of values to be processed through the network. Input
 ******************************************************************************/
 vector<double> Neuron_Layer::Run_and_Condition(vector<double> &input, vector<double> &expected)
 {
-    if (Is_head())
-    {
-        results = input;
-        results.push_back(1);
-        if (Is_tail())
-            return results;
-        else
-            return next_layer->Run_and_Condition(input, expected);
-    }
-    for (int x = 0; x < num_nodes; x++)
-    {
-        double sum = 0;
-        for (int y = 0; y < prev_layer->num_nodes; y++)
-        {
-            sum += prev_layer->results.at(y) * input_weights.at(x).at(y);
-        }
-        results.at(x) = Log_sigmoid(sum);
-    }
-    if (Is_tail())
-    {
-        Learn(expected);
-        return results;
-    }
-    return next_layer->Run_and_Condition(input, expected);
+	if (Is_head())
+	{
+		results = input;
+		if (Is_tail())
+			return results;
+		else
+			return next_layer->Run_and_Condition(input, expected);
+	}
+	for (int x = 0; x < num_nodes; x++)
+	{
+		double sum = 0;
+		for (int y = 0; y < prev_layer->num_nodes; y++)
+		{
+			sum += prev_layer->results.at(y) * input_weights.at(x).at(y);
+		}
+		results.at(x) = Log_sigmoid(sum);
+	}
+	if (Is_tail())
+	{
+		Learn(expected);
+		return results;
+	}
+	return next_layer->Run_and_Condition(input, expected);
 }
+
 
 /******************************************************************************
 Method: Attach
@@ -307,8 +313,6 @@ void Neuron_Layer::Attach( int nodes )
     else
     {
         next_layer = new Neuron_Layer(nodes, this);
-        next_layer -> prev_layer = this;
-        next_layer -> next_layer = NULL;
         next_layer -> input_weights.clear();
         vector<double> to_add;
         for( int x = 0; x < next_layer->num_nodes; x++ )
@@ -344,36 +348,40 @@ void Neuron_Layer::Learn(vector<double> &expected)
         return;
     }
     if(Is_tail()) // The tail learns off the expected value
-    {
-        for (int x = 0; x < num_nodes; x++)
-        {
-            double curr_delta = results.at(x)*(1 - results.at(x))*(expected.at(x) - results.at(x));
-            delta.at(x) = curr_delta;
-            for (int y = 0; y < prev_layer->num_nodes; y++)
-            {
-                input_weights.at(x).at(y) = input_weights.at(x).at(y) + prev_layer->results.at(y)*(1)*curr_delta;
-            }
-        }
+	{
+		for (int x = 0; x < num_nodes; x++)
+		{
+			double curr_delta = results.at(x)*(1 - results.at(x))*(expected.at(x) - results.at(x));
+			delta.at(x) = curr_delta;
+			for (int y = 0; y < prev_layer->num_nodes; y++)
+			{
+				input_weights.at(x).at(y) = input_weights.at(x).at(y) + prev_layer->results.at(y)*(learn_rate)*curr_delta;
+			}
+		}
     }
-    else 
-    {
-        for (int x = 0; x < num_nodes; x++)
-        {
-            double next_delta = 0;
-            for (int y = 0; y < next_layer -> num_nodes; y++)
-            { 
-                next_delta += next_layer->input_weights.at(y).at(x) * next_layer->delta.at(y);
-            }
-            double curr_delta = results.at(x)*(1 - results.at(x))*next_delta;
-            delta.at(x) = curr_delta;
-            for (int y = 0; y < prev_layer->num_nodes; y++)
-            {
-                input_weights.at(x).at(y) = input_weights.at(x).at(y) + prev_layer->results.at(y)*(1)*curr_delta;
-            }
-        }
-    }
-    prev_layer->Learn(expected);
-    return;
+	else 
+	{
+		for (int x = 0; x < num_nodes; x++)
+		{
+			double next_delta = 0;
+			for (int y = 0; y < next_layer -> num_nodes; y++)
+			{ 
+				next_delta += next_layer->input_weights.at(y).at(x) * next_layer->delta.at(y);
+			}
+			double curr_delta = results.at(x)*(1 - results.at(x))*next_delta;
+			delta.at(x) = curr_delta;
+			for (int y = 0; y < prev_layer->num_nodes; y++)
+			{
+				double old_weight = input_weights.at(x).at(y);
+				input_weights.at(x).at(y) = input_weights.at(x).at(y) + 
+					                        prev_layer->results.at(y)*(learn_rate)*curr_delta +
+											input_weights.at(x).at(y) - prev_weights.at(x).at(y) * momentum;
+				prev_weights.at(x).at(y) = old_weight;
+			}
+		}
+	}
+	prev_layer->Learn(expected);
+	return;
 }
 
 /******************************************************************************
