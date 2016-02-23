@@ -157,33 +157,59 @@ void removeYears(const All_Data& data, All_Data& data_wo_yr)
 /*
 	Author: Benjamin Kaiser
 */
-vector<double> genOutputVector(Year& yearOfData, Parameters& param_vals)
+vector<<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
 	vector<double> output;
 	if (yearOfData[1] < param_vals.normalized_threshold_low)
 	{
-		output[0] = 1;
-		output[1] = 0;
-		output[2] = 0;
+		output.push_back(1);
+		output.push_back(0);
+		output.push_back(0);
 	}
 	else if(yearOfData[1] >= param_vals.normalized_threshold_low && yearOfData[1] <= param_vals.normalized_threshold_medium)
 	{
-		output[0] = 0;
-		output[1] = 1;
-		output[0] = 0;
+		output.push_back(0);
+		output.push_back(1);
+		output.push_back(0);
 	}
 	else
 	{
-		output[0] = 0;
-		output[1] = 0;
-		output[2] = 1;
+		output.push_back(0);
+		output.push_back(0);
+		output.push_back(1);
 	}
 }
 
 /*
 	Author: Benjamin Kaiser
 */
-vector<double> genInputVector(All_Data& data, Parameters& param_vals)
+vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 {
+	int currYear;
+	int dataStartYear = data[0][0];
+
+	int monthCounter = 0;
+
+	double yearsOffset = max(years_burned_acres, (pdsi_months/12))
+
+	while (currYear - yearsOffset < dataStartYear)
+	{
+		currYear++;
+	};
 	
+	vector<double> inputVector;
+
+	//get burned acres data
+	for (int j = yearsOffset - 1; j < data.size() - ; j++)
+	{
+		//get burned acres to put in input vector
+		for (int i = 0; i < param_vals.years_burned_acres; i++)
+		{
+			inputVector.push_back(data[j][1];
+		}
+	}
+	while (monthCounter < 
+	//get pdsi data
+	//I need to deal with the month offset and the years offset in pushing this stupid crap
+	//nested for loop(s) probably
 }

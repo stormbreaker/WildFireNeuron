@@ -76,12 +76,13 @@ int main(int argc, char *argv[])
 //processing of net
 
 	Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0]);
-	for (int i = 0; i < param_vals.adjustable_weight_layers; i++)
+	for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
 	{
-		Neuron_Layer* layerpt;
+		/*Neuron_Layer* layerpt;
 		Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
 		layerpt = &layer;
-		net.Attach(layerpt);
+		*/
+		net.Attach(param_vals.nodes_per_layer[i]);
 	}
 	ifstream weights;
 	weights.open(param_vals.weights_file);
