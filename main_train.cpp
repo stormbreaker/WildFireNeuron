@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
 	All_Data test;
 	test = genInputVector(data, param_vals);
-	output_data(test);
+	//output_data(test);
 
 //	printf( "after normalization: \n" );
 //	output_data( data );
@@ -198,47 +198,68 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 */
 vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 {
-	int currYear;
 	int dataStartYear = data[0][0];
+	int currYear = dataStartYear;
+
+	cout << "dSY: " << dataStartYear << "cY: " << endl;
 
 	vector<double> temp;
 	vector<vector<double>> finalData;
 
-	int monthCounter = 0;
+	int monthCounter;
 
-	double yearsOffset = max(param_vals.years_burned_acres, (param_vals.pdsi_months/12));
+	int yearsOffset = max(param_vals.years_burned_acres, (param_vals.pdsi_months/12));
 
 	while (currYear - yearsOffset < dataStartYear)
 	{
 		currYear++;
+		cout << "cYloop: " << currYear << endl;
 	};
 	
 	vector<double> inputVector;
 
-	for (int j = yearsOffset - 1; j < data.size(); j++)
+	for (int j = yearsOffset; j < data.size(); j++)
 	{
+		monthCounter = 0;
+
 		//get burned acres to put in input vector
 		for (int i = 0; i < param_vals.years_burned_acres; i++)
 		{
 			inputVector.push_back(data[j][1]);
+			cout << "i1: " << i << endl;
 		}
+
 		//get pdsi data (this logic should be double-checked)
 		int end_month = param_vals.end_month + 1;
+	
 		int k = j;
+
+		cout << "K before loop: " << k << endl;
+
 		while (monthCounter < param_vals.pdsi_months)
 		{
+			cout << "num pdsi " << param_vals.pdsi_months << endl;
 			for (int i = end_month; i > 1; i--)
 			{
 				temp.emplace_back(data[k][i]);
+				monthCounter++;
+				cout << "mC " << monthCounter << endl;
 			}
+			end_month = 13;
+
 			k--;
+
+			cout << "K: " << k << endl;
 		}
 		reverse(temp.begin(), temp.end()); // i got the months backwards so now we need to flip them around
+
 		for (int i = 0; i < temp.size(); i++) //concatenate the pdsi into the input vector
 		{
 			inputVector.push_back(temp[i]);
 		}
+
 		finalData.push_back(inputVector);
+
 	}
 	return finalData;
 }
