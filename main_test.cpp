@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 //load the network
 //processing of net
 
-	Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0]);
+	Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals);
 	for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
 	{
 		/*Neuron_Layer* layerpt;

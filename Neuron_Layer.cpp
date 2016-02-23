@@ -37,7 +37,7 @@ Neuron_Layer::Neuron_Layer(int nodes, Neuron_Layer *prev)
     prev_layer = prev;
     next_layer = NULL;
     num_nodes = nodes;
-    learm_rate = prev_layer -> learn_rate;
+    learn_rate = prev_layer -> learn_rate;
     momentum =  prev_layer -> momentum;
     results.resize(num_nodes);
     delta.resize(num_nodes);
@@ -125,13 +125,13 @@ Description: Loads all of the weights from a human readable file. This should
 
 Parameters: network_in - ifstream to load network from.
 ******************************************************************************/
-bool Neuron_Layer::Load_network(ifstream &netowork_in)
+bool Neuron_Layer::Load_network(ifstream &network_in)
 {
     if (Is_head())
     {
         if (!Is_tail())//clear network
             next_layer -> ~Neuron_Layer();
-        if (!netowork_in.good() || !netowork_in.is_open())
+        if (!network_in.good() || !network_in.is_open())
             return false;
 
         int next_size = 0;
@@ -140,10 +140,10 @@ bool Neuron_Layer::Load_network(ifstream &netowork_in)
         network_in >> next_size >> this_size;
         results.resize(this_size);
         Attach(next_size);
-        return next_layer->Load_network(netowork_in);
+        return next_layer->Load_network(network_in);
     }
 
-    if (!netowork_in.good() || !netowork_in.is_open())
+    if (!network_in.good() || !network_in.is_open())
         return false;
     
     input_weights.resize(num_nodes);
@@ -156,17 +156,17 @@ bool Neuron_Layer::Load_network(ifstream &netowork_in)
     {
         for (int y = 0; y < prev_layer->num_nodes; y++)
         {
-            netowork_in >> in_weight;
+            network_in >> in_weight;
             input_weights.at(x).at(y) = in_weight;
         }
     }
     int next_size = 0;
     int this_size = 0;
-    if (netowork_in >> next_size)
+    if (network_in >> next_size)
     {
-        netowork_in >> this_size;
+        network_in >> this_size;
         Attach(next_size);
-        return next_layer->Load_network(netowork_in);
+        return next_layer->Load_network(network_in);
     }
     return true;
 }
