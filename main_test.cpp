@@ -30,11 +30,13 @@ typedef vector<float> Year;			// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 void output_data( const All_Data& data );
+void removeYears(const All_Data& data, const All_Data& data_wo_yr);
 
 
 int main(int argc, char *argv[])
 {
 	char *param_file;					// Parameter file passed in from args
+	vector<double> results;
 
 //	char *data_file;	// TEMPORARY FOR TESTING
 
@@ -99,11 +101,12 @@ for (int i = 0; i < data.size(); i++)
 
 for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the actual code is wrong
 {
-	net.Run(data_wo_yr[j])
-}
-	return 0;
+	results = net.Run(data_wo_yr[j])
 }
 */
+	return 0;
+}
+
 /*
 	testing file parsing for pdsi
 */
@@ -114,5 +117,16 @@ void output_data( const All_Data& data )
 		for( Year::const_iterator col = row->begin(); col != row->end(); ++col )
 			cout << *col << " ";
 		cout << endl;
+	}
+}
+
+void removeYears(const All_Data& data, All_Data& data_wo_yr)
+{
+	for (unsigned int i = 0; i < data.size(); i++)
+	{
+		for (unsigned int j = 1; j < data[i].size(); j++)
+		{
+			data_wo_yr[i][j-1] = data[i][j];
+		}
 	}
 }

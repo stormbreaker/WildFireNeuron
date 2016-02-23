@@ -32,6 +32,7 @@ typedef vector<float> Year;			// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 void output_data( const All_Data& data );
+void removeYears(const All_Data& data, const All_Data& data_wo_yr);
 
 
 int main(int argc, char *argv[])
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
 //	char *data_file;	// TEMPORARY FOR TESTING
 
 	All_Data data;
+	All_Data data_wo_yr;
 
 	Parameters param_vals;				// Values from parameter file
 
@@ -82,18 +84,6 @@ int main(int argc, char *argv[])
 //	printf("after randomization: \n" );
 	//output_data( data );
 
-	//slicing years off <--- this needs confirmed
-	/*
-	All_Data data_wo_yr;
-
-	for (int i = 0; i < data.size(); i++)
-	{
-		for (int j = 1; j < data[i].size(); j++)
-		{
-			data_wo_yr[i][j] = data[i][j];
-		}
-	}
-	*/
 	//processing of net
 	/*
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0]);
@@ -113,7 +103,8 @@ int main(int argc, char *argv[])
 	{
 		//now we need to have something for training
 
-		for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the actual code is wrong
+		for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the
+		actual data values wrong
 		{
 			results = net.Run_and_Condition(data_wo_yr[j], data_wo_yr[j])
 		}
@@ -141,5 +132,16 @@ void output_data( const All_Data& data )
 		for( Year::const_iterator col = row->begin(); col != row->end(); col++ )
 			cout << *col << setw(5) << " ";
 		cout << endl;
+	}
+}
+
+void removeYears(const All_Data& data, All_Data& data_wo_yr)
+{
+	for (unsigned int i = 0; i < data.size(); i++)
+	{
+		for (unsigned int j = 1; j < data[i].size(); j++)
+		{
+			data_wo_yr[i][j-1] = data[i][j];
+		}
 	}
 }
