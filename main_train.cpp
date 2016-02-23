@@ -28,7 +28,7 @@ Feb 6, 2016			Finished code for neural network file I/O
 using namespace std;
 
 
-typedef vector<float> Year;			// holds values for one year
+typedef vector<double> Year;			// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 void output_data( const All_Data& data );

@@ -8,15 +8,15 @@ Description:
 ******************************************************************************/
 #include "Normalization.h"
 
-void normalize_pdsi( vector< vector<float> >& data )
+void normalize_pdsi( vector< vector<double> >& data )
 {
 	int row_size = 0;					// number of rows in 2d vector
 	int col_size = 0;					// number of cols in 2d vector
 
-	float max;						// maximum PDSI val for that year
-	float min;						// minimum PDSI val for that year
+	double max;						// maximum PDSI val for that year
+	double min;						// minimum PDSI val for that year
 
-	float denom; 					// (max - min) for normalization
+	double denom; 					// (max - min) for normalization
 
 	// get number of vectors to loop over
 	row_size = data.size();
@@ -45,17 +45,17 @@ void normalize_pdsi( vector< vector<float> >& data )
 
 }
 
-void normalize_burned_acres( vector< vector<float> >& data )
+void normalize_burned_acres( vector< vector<double> >& data )
 {
 	int i;								// iterator for "for loops"
 	int row_size;						// number of rows in 2d vector
 	
-	float max;							// maximum number of burned acres
-	float min;							// minimum number of burned acres
+	double max;							// maximum number of burned acres
+	double min;							// minimum number of burned acres
 
-	float denom;						// (max - min) for normalization
+	double denom;						// (max - min) for normalization
 
-	vector<float> burned_acres;			// temporarily holds burned acre values to normalize
+	vector<double> burned_acres;			// temporarily holds burned acre values to normalize
 
 	// get number of vectors to loop over
 	row_size = data.size();

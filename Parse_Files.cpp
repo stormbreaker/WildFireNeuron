@@ -20,7 +20,7 @@ Description: Parses a csv file to obtain year, burned acrage, and PDSI data
 	vector. Then a vector is used to store all years.
 Parameters:
 ******************************************************************************/
-void parse_csv( char* pdsi_file, vector< vector<float> >& all_data )
+void parse_csv( char* pdsi_file, vector< vector<double> >& all_data )
 {
 	//float data_val;							// convert from line read in to a float
 
@@ -46,7 +46,7 @@ void parse_csv( char* pdsi_file, vector< vector<float> >& all_data )
 		if( ( 0 == line.compare( 0, 1, "1" ) ) || ( 0 == line.compare( 0, 1, "2") ) )
 		{
 			string data;
-			vector <float> year_vals;
+			vector <double> year_vals;
 
 			// parse line to break it up at commas
 			year_vals = split_string( line, ',' );
@@ -132,19 +132,19 @@ void parse_param( char* param_file, Parameters *param_vals )
 			case 2:
 				pos = line.find( " " );
 				sub_line = line.substr( 0, pos );
-				param_vals->learn_rate = stof( sub_line );
+				param_vals->learn_rate = stod( sub_line );
 				break;
 
 			case 3:
 				pos = line.find( " " );
 				sub_line = line.substr( 0, pos );
-				param_vals->momentum = stof( sub_line );
+				param_vals->momentum = stod( sub_line );
 				break;
 
 			case 4:
 				pos = line.find( " " );
 				sub_line = line.substr( 0, pos );
-				param_vals->threshold_error = stof( sub_line );
+				param_vals->threshold_error = stod( sub_line );
 				break;
 
 			case 5:
@@ -224,12 +224,12 @@ Author: 	 Stephanie Athow
 Description: Parses the given parameter file
 Parameters:
 ******************************************************************************/
-vector<float> split_string( string line, char delim )
+vector<double> split_string( string line, char delim )
 {
-	vector<float> data_values;				// holds data values to be returned
+	vector<double> data_values;				// holds data values to be returned
 	stringstream line_stream( line );		// turn into stream to use getline
 	string tok;								// holds return from getline
-	float val;								// holds float val converted from getline
+	double val;								// holds float val converted from getline
 
 	while( getline( line_stream, tok, delim ) )
 	{
