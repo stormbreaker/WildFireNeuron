@@ -1,0 +1,4 @@
+*.o
+ANNtrain
+ANNtest
+CrossValidate
