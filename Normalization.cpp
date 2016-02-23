@@ -45,7 +45,7 @@ void normalize_pdsi( vector< vector<double> >& data )
 
 }
 
-void normalize_burned_acres( vector< vector<double> >& data )
+void normalize_burned_acres( vector< vector<double> >& data, Parameters *param_vals )
 {
 	int i;								// iterator for "for loops"
 	int row_size;						// number of rows in 2d vector
@@ -53,12 +53,19 @@ void normalize_burned_acres( vector< vector<double> >& data )
 	double max;							// maximum number of burned acres
 	double min;							// minimum number of burned acres
 
+	double thresh_low;					// normalize the low threshold wrt data 
+	double thresh_med;					// normalize the medium threshold wrt data
+
 	double denom;						// (max - min) for normalization
 
 	vector<double> burned_acres;			// temporarily holds burned acre values to normalize
 
 	// get number of vectors to loop over
 	row_size = data.size();
+
+	// get low and medium thresholds
+	thresh_low = param_vals -> threshold_low;
+	thresh_med = param_vals -> threshold_medium;
 
 	// loop through and get all burned acre values
 	for( i = 0; i < row_size; i++ )
@@ -79,6 +86,10 @@ void normalize_burned_acres( vector< vector<double> >& data )
 	{
 		data.at(i).at(1) = ( ( data.at(i).at(1) - min ) / denom );
 	}
+
+	// normalize low and med thresh
+	param_vals -> norm_threshold_low = ( ( thresh_low - min ) / denom );
+	param_vals -> norm_threshold_med = ( ( thresh_med - min ) / denom );
 }
 
 

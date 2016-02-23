@@ -1,3 +1,6 @@
+#ifndef PARSE_FILES_H
+#define PARSE_FILES_H
+
 /******************************************************************************
 Program:	 Artifical Neural Networks - Wildfire Prediction
 Author:		 Stephanie Athow
@@ -40,8 +43,10 @@ struct Parameters{
 
 	double learn_rate;			
 	double momentum;
-	double threshold_error;		// Threshold of ANN error - training cuttoff
-								// or testing acceptance
+	double threshold_error;			// Threshold of ANN error - training cuttoff
+									// or testing acceptance
+	double norm_threshold_low;		// normalized threshold low
+	double norm_threshold_med;		// normalized threshold medium
 
 };
 
@@ -55,4 +60,4 @@ void parse_param( char*  params_file, Parameters *param_vals );
 vector<double> split_string( const string line, char delim );
 
 
-
+#endif
