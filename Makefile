@@ -55,4 +55,4 @@ CrossValidate: main_cross_validate.o Parse_Files.o Neuron_Layer.o
 
 # utility targets
 clean:
-
+	rm -f *.o *~ core
