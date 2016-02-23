@@ -157,7 +157,33 @@ void removeYears(const All_Data& data, All_Data& data_wo_yr)
 /*
 	Author: Benjamin Kaiser
 */
-vector<double> genOutputVector(vector<double> inputVector)
+vector<double> genOutputVector(Year& yearOfData, Parameters& param_vals)
+{
+	vector<double> output;
+	if (yearOfData[1] < param_vals.normalized_threshold_low)
+	{
+		output[0] = 1;
+		output[1] = 0;
+		output[2] = 0;
+	}
+	else if(yearOfData[1] >= param_vals.normalized_threshold_low && yearOfData[1] <= param_vals.normalized_threshold_medium)
+	{
+		output[0] = 0;
+		output[1] = 1;
+		output[0] = 0;
+	}
+	else
+	{
+		output[0] = 0;
+		output[1] = 0;
+		output[2] = 1;
+	}
+}
+
+/*
+	Author: Benjamin Kaiser
+*/
+vector<double> genInputVector(All_Data& data, Parameters& param_vals)
 {
 	
 }
