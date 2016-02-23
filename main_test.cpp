@@ -35,6 +35,7 @@ void output_data( const All_Data& data );
 int main(int argc, char *argv[])
 {
 	char *param_file;					// Parameter file passed in from args
+	vector<double> results;
 
 //	char *data_file;	// TEMPORARY FOR TESTING
 
@@ -99,11 +100,12 @@ for (int i = 0; i < data.size(); i++)
 
 for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the actual code is wrong
 {
-	net.Run(data_wo_yr[j])
-}
-	return 0;
+	results = net.Run(data_wo_yr[j])
 }
 */
+	return 0;
+}
+
 /*
 	testing file parsing for pdsi
 */
