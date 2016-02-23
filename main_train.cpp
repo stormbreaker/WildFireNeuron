@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
 	// normalize data
 	normalize_pdsi( data );
-	normalize_burned_acres( data );
+	normalize_burned_acres( data, &param_vals );
 
 //	printf( "after normalization: \n" );
 //	output_data( data );
