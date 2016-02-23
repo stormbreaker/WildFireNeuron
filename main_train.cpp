@@ -79,8 +79,9 @@ int main(int argc, char *argv[])
 	normalize_pdsi( data );
 	normalize_burned_acres( data, &param_vals );
 
-	All_Data test;
-	test = genInputVector(data, param_vals);
+	All_Data inData;
+	inData = genInputVector(data, param_vals);
+
 	//output_data(test);
 
 //	printf( "after normalization: \n" );
@@ -91,11 +92,20 @@ int main(int argc, char *argv[])
 //	printf("after randomization: \n" );
 	//output_data( data );
 
-	removeYears(data, data_wo_yr);
+	cout << "randomized" << endl;
+	All_Data finalOutput;
+	cout << "declared final outvec" << endl;
+	finalOutput = genOutputVector(data, param_vals);
+	cout << "assigned final" << endl;
+	
+
+	//removeYears(data, data_wo_yr);
+	cout << "removed years" << endl;
 
 	//processing of net
 	
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
+		cout << "made head layer" << endl;
 		for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
 		{
 			/*Neuron_Layer* layerpt;
@@ -104,32 +114,29 @@ int main(int argc, char *argv[])
 			*/
 			net.Attach(param_vals.nodes_per_layer[i]);
 		}
+
+	cout << "BUILT NET" << endl;
 	
 	//at this point the net should be constructed
 
 	//everything I wrote here needs to be looped
 
-	/*
+//-------------------------------------------------------------------------------GOOD TO HERE------------------------------
+	ofstream weights;
+	weights.open(param_vals.weights_file);
 	for (int i = 0; i < param_vals.epochs; i++)
 	{
 		//now we need to have something for training
-
-		for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the
-		actual data values wrong
+		for (int j = 0; j < inData.size(); j++) //the idea is here but the
 		{
-			results = net.Run_and_Condition(data_wo_yr[j], <vector of 1's and 0's eg <1,0,0>)
+			results = net.Run_and_Condition(inData[j], finalOutput[j]);
 		}
-		//we need to save the weights
-
-		ofstream weights;
-		weights.open(paramvals.weights_file);
-		net.Save_network(weights);
-
+		//we need to save the weight
 	}
-	*/
+	cout << "after for loop" << endl;
+	net.Save_network(weights);
 
-
-
+	weights.close();
 	return 0;
 }
 
@@ -201,8 +208,6 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 	int dataStartYear = data[0][0];
 	int currYear = dataStartYear;
 
-	cout << "dSY: " << dataStartYear << "cY: " << endl;
-
 	vector<double> temp;
 	vector<vector<double>> finalData;
 
@@ -213,7 +218,6 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 	while (currYear - yearsOffset < dataStartYear)
 	{
 		currYear++;
-		cout << "cYloop: " << currYear << endl;
 	};
 	
 	vector<double> inputVector;
@@ -226,7 +230,6 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 		for (int i = 0; i < param_vals.years_burned_acres; i++)
 		{
 			inputVector.push_back(data[j][1]);
-			cout << "i1: " << i << endl;
 		}
 
 		//get pdsi data (this logic should be double-checked)
@@ -234,22 +237,19 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 	
 		int k = j;
 
-		cout << "K before loop: " << k << endl;
 
 		while (monthCounter < param_vals.pdsi_months)
 		{
-			cout << "num pdsi " << param_vals.pdsi_months << endl;
+
 			for (int i = end_month; i > 1; i--)
 			{
 				temp.emplace_back(data[k][i]);
 				monthCounter++;
-				cout << "mC " << monthCounter << endl;
 			}
 			end_month = 13;
 
 			k--;
 
-			cout << "K: " << k << endl;
 		}
 		reverse(temp.begin(), temp.end()); // i got the months backwards so now we need to flip them around
 
