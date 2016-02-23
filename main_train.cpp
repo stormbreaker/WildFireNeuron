@@ -34,6 +34,9 @@ typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 void output_data( const All_Data& data );
 void removeYears(const All_Data& data, All_Data& data_wo_yr);
 
+vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals);
+vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals);
+
 
 int main(int argc, char *argv[])
 {
@@ -75,6 +78,10 @@ int main(int argc, char *argv[])
 	// normalize data
 	normalize_pdsi( data );
 	normalize_burned_acres( data, &param_vals );
+
+	All_Data test;
+	test = genInputVector(data, param_vals);
+	output_data(test);
 
 //	printf( "after normalization: \n" );
 //	output_data( data );
