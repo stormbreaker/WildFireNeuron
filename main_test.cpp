@@ -26,11 +26,11 @@ Feb 6, 2016			Finished code for neural network file I/O
 using namespace std;
 
 
-typedef vector<float> Year;			// holds values for one year
+typedef vector<double> Year;			// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 void output_data( const All_Data& data );
-void removeYears(const All_Data& data, const All_Data& data_wo_yr);
+void removeYears(const All_Data& data, All_Data& data_wo_yr);
 
 
 int main(int argc, char *argv[])
@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
 //	char *data_file;	// TEMPORARY FOR TESTING
 
 	All_Data data;
+	All_Data data_wo_yr;
 
 	Parameters param_vals;				// Values from parameter file
 
@@ -69,41 +70,30 @@ int main(int argc, char *argv[])
 	// check correct reading of PDSI info
 //	output_data( data );
 
-//slicing years off <--- this needs confirmed
-/*
-All_Data data_wo_yr;
-
-for (int i = 0; i < data.size(); i++)
-{
-	for (int j = 1; j < data[i].size(); j++)
-	{
-		data_wo_yr[i][j] = data[i][j];
-	}
-}
-*/
+	removeYears(data, data_wo_yr);
 
 //load the network
 //processing of net
-/*
+
 	Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0]);
 	for (int i = 0; i < param_vals.adjustable_weight_layers; i++)
 	{
 		Neuron_Layer* layerpt;
 		Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
 		layerpt = &layer;
-		net.attach(layerpt)
+		net.Attach(layerpt);
 	}
-	ofstream weights;
-	weights.open(paramvals.weights_file);
+	ifstream weights;
+	weights.open(param_vals.weights_file);
 	net.Load_network(weights);
 
-//at this point the net should be constructed
-
-for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the actual code is wrong
-{
-	results = net.Run(data_wo_yr[j])
-}
-*/
+	//at this point the net should be constructed
+	/*
+	for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the actual code is wrong
+	{
+		results = net.Run(data_wo_yr[j])
+	}
+	*/
 	return 0;
 }
 
