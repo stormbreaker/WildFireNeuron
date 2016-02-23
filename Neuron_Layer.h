@@ -8,11 +8,20 @@ using namespace std;
 
 class Neuron_Layer
 {
+  protected:
+	/*
+    **Internal InitialiZer for adding new nodes.
+    */
+    Neuron_Layer(int nodes, Neuron_Layer *prev);
+  
   public:
+
 	/*
 	**Initialize layer with given node size
 	*/
     Neuron_Layer(int nodes);
+    
+
 
 	/*
 	**Deallocate entire network
@@ -20,7 +29,7 @@ class Neuron_Layer
    ~Neuron_Layer();
 
 	/*
-	**Number of nodes in this network layer
+    **Number of nodes in this network layer
 	*/
     int Num_nodes();
 
@@ -37,7 +46,7 @@ class Neuron_Layer
 	/*
 	**Add a new layer to the end of the network
 	*/
-    void Attach(Neuron_Layer* new_layer );
+    void Attach(int nodes );
 
 	/*
 	**Save network to text file

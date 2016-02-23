@@ -24,6 +24,16 @@ Neuron_Layer::Neuron_Layer(int nodes)
 {
     prev_layer = NULL;
     next_layer = NULL;
+    num_nodes = nodes + 1;
+    results.resize(num_nodes);
+    delta.resize(num_nodes);
+}
+
+
+Neuron_Layer::Neuron_Layer(int nodes, Neuron_Layer *prev)
+{
+    prev_layer = prev;
+    next_layer = NULL;
     num_nodes = nodes;
     results.resize(num_nodes);
     delta.resize(num_nodes);
@@ -122,7 +132,7 @@ bool Neuron_Layer::Load_network(ifstream &netowork_in)
         int this_size = 0;
         netowork_in >> next_size >> this_size;
         results.resize(this_size);
-        Attach(new Neuron_Layer(next_size));
+        Attach(next_size);
         return next_layer->Load_network(netowork_in);
     }
 
@@ -148,7 +158,7 @@ bool Neuron_Layer::Load_network(ifstream &netowork_in)
     if (netowork_in >> next_size)
     {
         netowork_in >> this_size;
-        Attach(new Neuron_Layer(next_size));
+        Attach(next_size);
         return next_layer->Load_network(netowork_in);
     }
     return true;
@@ -209,6 +219,7 @@ vector<double> Neuron_Layer::Run(vector<double> &input)
     if (Is_head())
     {
         results = input;
+        results.push_back(1);
         if (Is_tail())
             return results;
         else
@@ -252,6 +263,7 @@ vector<double> Neuron_Layer::Run_and_Condition(vector<double> &input, vector<dou
     if (Is_head())
     {
         results = input;
+        results.push_back(1);
         if (Is_tail())
             return results;
         else
@@ -286,15 +298,15 @@ Description: Attahces a layer to the end of the network. This function will
 
 Paramaters: new_layer - pointer to a new network layer to attach to the net.
 ******************************************************************************/
-void Neuron_Layer::Attach( Neuron_Layer* new_layer )
+void Neuron_Layer::Attach( int nodes )
 {
     if(!Is_tail())
     {
-        next_layer -> Attach(new_layer);
+        next_layer -> Attach(nodes);
     }
     else
     {
-        next_layer = new_layer;
+        next_layer = new Neuron_Layer(nodes, this);
         next_layer -> prev_layer = this;
         next_layer -> next_layer = NULL;
         next_layer -> input_weights.clear();
