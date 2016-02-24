@@ -220,8 +220,6 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 			outputSingle.push_back(1);
 		}
 		output.push_back(outputSingle);
-		cout << outputSingle;
-		cin.ignore();
 	}
 	return output;		
 }

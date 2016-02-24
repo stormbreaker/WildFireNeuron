@@ -223,7 +223,8 @@ void parse_param( char* param_file, Parameters *param_vals )
 /******************************************************************************
 Function:	 Split Strings
 Author: 	 Stephanie Athow
-Description: Parses a csv file, it will break up a comma sperated line
+Description: 
+	Parses a csv file, it will break up a comma sperated line
 Parameters:
 	in: line		line to break up
 	in: delim		character to delineate a break

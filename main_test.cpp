@@ -29,8 +29,10 @@ using namespace std;
 typedef vector<double> Year;			// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
+double accuracy( int correct, int total );
 void output_data( const All_Data& data );
-void removeYears(const All_Data& data, All_Data& data_wo_yr);
+void removeYears( const All_Data& data, All_Data& data_wo_yr );
+vector<vector<double>> genOutputVector( All_Data& data, Parameters& param_vals );
 
 
 int main(int argc, char *argv[])
@@ -98,9 +100,25 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-/*
-	testing file parsing for pdsi
-*/
+/******************************************************************************
+Function:	 accuracy
+Author: 	 Stephanie Athow
+Description: 
+	calculate accuracy of number of correct predictions
+******************************************************************************/
+double accuracy( int correct, int total )
+{
+	double accuracy = (double) correct / (double) total;
+	
+	return accuracy;
+}
+
+/******************************************************************************
+Function:	 Output Data
+Author: 	 Stephanie Athow
+Description: 
+	print out data for debugging purposes
+******************************************************************************/
 void output_data( const All_Data& data )
 {
 	for( All_Data::const_iterator row = data.begin(); row != data.end(); ++row )
@@ -122,3 +140,37 @@ void removeYears(const All_Data& data, All_Data& data_wo_yr)
 	}
 }
 
+/******************************************************************************
+Function:	 Generate Output Vector
+Author: 	 Ben Kaiser
+Description: 
+	Generate a vector with expected output values
+******************************************************************************/
+vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
+{
+	vector<vector<double>> output;
+	vector<double> outputSingle;
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (data[i][1] < param_vals.norm_threshold_low)
+		{
+			outputSingle.push_back(1);
+			outputSingle.push_back(0);
+			outputSingle.push_back(0);
+		}
+		else if(data[i][1] >= param_vals.norm_threshold_low && data[i][1] <= param_vals.norm_threshold_med)
+		{
+			outputSingle.push_back(0);
+			outputSingle.push_back(1);
+			outputSingle.push_back(0);
+		}
+		else
+		{
+			outputSingle.push_back(0);
+			outputSingle.push_back(0);
+			outputSingle.push_back(1);
+		}
+		output.push_back(outputSingle);
+	}
+	return output;		
+}
