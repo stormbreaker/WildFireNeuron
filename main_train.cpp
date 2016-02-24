@@ -103,7 +103,11 @@ int main(int argc, char *argv[])
 	cout << "removed years" << endl;
 
 	//processing of net
-	
+	    for ( int x  = 0; x < param_vals.adjustable_weight_layers; x++ )
+        {
+            cout << "Layer " << x << "\t Nodes: " << param_vals.nodes_per_layer[x] << endl;
+        }
+
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
 		cout << "made head layer" << endl;
 		for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
@@ -114,6 +118,7 @@ int main(int argc, char *argv[])
 			*/
 			net.Attach(param_vals.nodes_per_layer[i]);
 		}
+        net.Attach(3); //Output Layer
 
 	cout << "BUILT NET" << endl;
 	

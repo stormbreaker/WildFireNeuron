@@ -276,6 +276,7 @@ vector<double> Neuron_Layer::Run_and_Condition(vector<double> &input, vector<dou
 	}
 	for (int x = 0; x < num_nodes; x++)
 	{
+
 		double sum = 0;
 		for (int y = 0; y < prev_layer->num_nodes; y++)
 		{
@@ -324,6 +325,7 @@ void Neuron_Layer::Attach( int nodes )
                 to_add.at(y) = (rand()%1000)/5000.0;
             }
             next_layer -> input_weights.push_back(to_add);
+			next_layer -> prev_weights.push_back(to_add);
         }
     }
     return;
@@ -371,11 +373,12 @@ void Neuron_Layer::Learn(vector<double> &expected)
 			double curr_delta = results.at(x)*(1 - results.at(x))*next_delta;
 			delta.at(x) = curr_delta;
 			for (int y = 0; y < prev_layer->num_nodes; y++)
-			{
+			{	//cout << "Take Notes!" << endl;
 				double old_weight = input_weights.at(x).at(y);
+				//cout << "Got Old Weight" << endl;
 				input_weights.at(x).at(y) = input_weights.at(x).at(y) + 
 					                        prev_layer->results.at(y)*(learn_rate)*curr_delta +
-											input_weights.at(x).at(y) - prev_weights.at(x).at(y) * momentum;
+											( input_weights.at(x).at(y) - prev_weights.at(x).at(y) ) * momentum;
 				prev_weights.at(x).at(y) = old_weight;
 			}
 		}
