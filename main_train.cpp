@@ -97,7 +97,8 @@ int main(int argc, char *argv[])
 	cout << "declared final outvec" << endl;
 	finalOutput = genOutputVector(data, param_vals);
 	cout << "assigned final" << endl;
-	
+
+	output_data(finalOutput);
 
 	//removeYears(data, data_wo_yr);
 	cout << "removed years" << endl;
@@ -165,12 +166,15 @@ int main(int argc, char *argv[])
 */
 void output_data( const All_Data& data )
 {
+	ofstream debug;
+	debug.open("debug.txt");
 	for( All_Data::const_iterator row = data.begin(); row != data.end(); row++ )
 	{
 		for( Year::const_iterator col = row->begin(); col != row->end(); col++ )
-			cout << *col << setw(5) << " ";
-		cout << endl;
+			debug << *col << setw(5) << " ";
+		debug << endl;
 	}
+	debug.close();
 }
 
 /*
@@ -196,6 +200,7 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 	vector<double> outputSingle;
 	for (int i = 0; i < data.size(); i++)
 	{
+		outputSingle.clear();
 		if (data[i][1] < param_vals.norm_threshold_low)
 		{
 			outputSingle.push_back(1);
@@ -215,6 +220,8 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 			outputSingle.push_back(1);
 		}
 		output.push_back(outputSingle);
+		cout << outputSingle;
+		cin.ignore();
 	}
 	return output;		
 }
