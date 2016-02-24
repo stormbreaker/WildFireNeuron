@@ -103,14 +103,17 @@ int main(int argc, char *argv[])
 	cout << "removed years" << endl;
 
 	//processing of net
-	    for ( int x  = 0; x < param_vals.adjustable_weight_layers; x++ )
+	    for ( int x  = 0; x < param_vals.adjustable_weight_layers + 1; x++ )
         {
             cout << "Layer " << x << "\t Nodes: " << param_vals.nodes_per_layer[x] << endl;
         }
 
+		//creating
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
+		
+
 		cout << "made head layer" << endl;
-		for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
+		for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
 		{
 			/*Neuron_Layer* layerpt;
 			Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
@@ -119,6 +122,13 @@ int main(int argc, char *argv[])
 			net.Attach(param_vals.nodes_per_layer[i]);
 		}
         //net.Attach(3); //Output Layer
+
+		ifstream weightsin;
+		weightsin.open(param_vals.weights_file);
+		if (weightsin.is_open())
+		{
+			net.Load_network(weightsin);
+		}
 
 	cout << "BUILT NET" << endl;
 	
@@ -132,10 +142,13 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < param_vals.epochs; i++)
 	{
 		//need to re-randomize
+		cout << "entered first foor loop" << endl;
 
 		for (int j = 0; j < inData.size(); j++) //the idea is here but the
 		{
+			cout << "running condition" << endl;
 			results = net.Run_and_Condition(inData[j], finalOutput[j]);
+			cout << "got results" << endl;
 		}
 		//we need to save the weight
 	}
