@@ -60,7 +60,7 @@ Neuron_Layer::~Neuron_Layer()
     input_weights.clear();
     if(next_layer != NULL )
     {
-        next_layer -> ~Neuron_Layer();
+        delete next_layer;
     }
 }
 
@@ -130,7 +130,10 @@ bool Neuron_Layer::Load_network(ifstream &network_in)
     if (Is_head())
     {
         if (!Is_tail())//clear network
-            next_layer -> ~Neuron_Layer();
+        {
+            delete next_layer;
+            next_layer = NULL;
+        }
         if (!network_in.good() || !network_in.is_open())
             return false;
 
