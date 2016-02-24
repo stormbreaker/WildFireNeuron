@@ -88,6 +88,7 @@ void parse_param( char* param_file, Parameters *param_vals )
 	
 	string sub_line;						// used to temp store file names (weights and csv)
 	string sub_line2;						// used to process when finding all the weights
+	string sub_try;
 	ifstream params_in;
 
 	params_in.open( param_file );
@@ -159,12 +160,20 @@ void parse_param( char* param_file, Parameters *param_vals )
 
 			case 6:
 				sub_line2 = line;
-				for( int i = 0; i < param_vals->adjustable_weight_layers; i++ )
+				cout << "line is: " << line << endl;
+				for( int i = 0; i < param_vals->adjustable_weight_layers +1; i++ )
 				{
 					pos = sub_line2.find( " " );
+					sub_try = sub_line2.substr( 0, pos );
+					param_vals->nodes_per_layer[i] = stoi( sub_try );
+
+//					cout << "sub_try is: " << sub_try << endl;
 					sub_line2 = sub_line2.substr(pos + 1, sub_line2.length());
-					sub_line = sub_line2.substr( 0, pos );
-					param_vals->nodes_per_layer[i] = stoi( sub_line );
+
+//					cout << "subline 2 is: " << sub_line2 << endl;
+//					sub_line = sub_line2.substr( 0, pos );
+//					cout << "subline is: " << sub_line << endl;
+//					param_vals->nodes_per_layer[i] = stoi( sub_line );
 				}
 				break;
 
