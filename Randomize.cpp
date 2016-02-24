@@ -1,13 +1,26 @@
 /******************************************************************************
-Program:
-Author:
-Class:
-Instructor:
-Due Date:
+Program:	Artificial Neural Networks - Wildfire Prediction
+Authors:	Stephanie Athow, Marcus Haberling
+Class:		CSC 447/547
+Instructor:	Dr. John Weiss
+Due Date:	Feb 23, 2016
 Description:
+	Holds the function definitions for randomizing 
 ******************************************************************************/
 #include "Randomize.h"
 
+
+/*******************************************************************************
+Function:	Randomize
+Author:		Marcus Haberline
+Description: 
+	
+Parameters:
+	
+Returns:
+	none
+*******************************************************************************/
+/*
 vector<int> create_order( int number_of_records )
 {
     vector<int> in_order;
@@ -26,7 +39,20 @@ vector<int> create_order( int number_of_records )
     }
 	return to_return;
 }
+*/
 
+/*******************************************************************************
+Function:	Randomize
+Author:		Stephanie Athow
+Description: 
+	Randomize the order of the vectors in a vector of vectors, but does	not
+	randomize the contents the second vector
+Parameters:
+	in/out:	data	A vector of vectors where one vector contains the year,
+					burned acres, and 12 months of PDSI data
+Returns:
+	none
+*******************************************************************************/
 void randomize( vector< vector<double> > & data )
 {
 	// seeding for random number generator
@@ -36,5 +62,4 @@ void randomize( vector< vector<double> > & data )
 	shuffle( data.begin(), data.end(), default_random_engine( seed ) ); 
 	
 }
-
 
