@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 			*/
 			net.Attach(param_vals.nodes_per_layer[i]);
 		}
-        net.Attach(3); //Output Layer
+        //net.Attach(3); //Output Layer
 
 	cout << "BUILT NET" << endl;
 	
@@ -126,12 +126,13 @@ int main(int argc, char *argv[])
 
 	//everything I wrote here needs to be looped
 
-//-------------------------------------------------------------------------------GOOD TO HERE------------------------------
+
 	ofstream weights;
 	weights.open(param_vals.weights_file);
 	for (int i = 0; i < param_vals.epochs; i++)
 	{
-		//now we need to have something for training
+		//need to re-randomize
+
 		for (int j = 0; j < inData.size(); j++) //the idea is here but the
 		{
 			results = net.Run_and_Condition(inData[j], finalOutput[j]);

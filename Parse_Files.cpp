@@ -82,10 +82,12 @@ void parse_param( char* param_file, Parameters *param_vals )
 {
 	int pos;								// used in substring splitting
 	int lines_stored = 0;					// used to count the number of lines stored and to "index" which line
+	int beginpos;							// used to get the start position for getting number of nodes in a layer
 
 	string line;							//temp for an entire line
 	
 	string sub_line;						// used to temp store file names (weights and csv)
+	string sub_line2;						// used to process when finding all the weights
 	ifstream params_in;
 
 	params_in.open( param_file );
@@ -156,10 +158,12 @@ void parse_param( char* param_file, Parameters *param_vals )
 				break;
 
 			case 6:
-				for( int i = 0; i < param_vals->adjustable_weight_layers+1; i++ )
+				sub_line2 = line;
+				for( int i = 0; i < param_vals->adjustable_weight_layers; i++ )
 				{
-					pos = line.find( " " );
-					sub_line = line.substr( 0, pos );
+					pos = sub_line2.find( " " );
+					sub_line2 = sub_line2.substr(pos + 1, sub_line2.length());
+					sub_line = sub_line2.substr( 0, pos );
 					param_vals->nodes_per_layer[i] = stoi( sub_line );
 				}
 				break;
