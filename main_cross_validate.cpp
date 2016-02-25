@@ -90,11 +90,12 @@ int main(int argc, char *argv[])
 	{
 		inputVectorList = create_order(finalOutput.size());
 		
+		int indexToWork = inputVectorList[indextoSkip];
 
 		//assign the testing vector as the vector from inData with the index which has the same 
 		// value as the value in inputVectorList which is indexed by indextoSkip
-		testVector = inData[inputVectorList[indextoSkip]];
-		testOVector = finalOutput[inputVectorList[indextoSkip]];
+		testVector = inData[indexToWork];
+		testOVector = finalOutput[indexToWork];
 
 
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
 			if (i != indextoSkip)
 			{
 				cout << "running condition" << endl;
-				results = net.Run_and_Condition(inData[j], finalOutput[j]);
+				results = net.Run_and_Condition(inData[indexToWork], finalOutput[indexToWork]);
 				cout << "got results" << endl;
 			}
 		}
@@ -184,8 +185,6 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 			outputSingle.push_back(1);
 		}
 		output.push_back(outputSingle);
-		cout << outputSingle;
-		cin.ignore();
 	}
 	return output;		
 }
