@@ -34,8 +34,10 @@ typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 void output_data( const All_Data& data );
 
+double accuracy( int correct, int total );
 vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals);
 vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals);
+bool compare_vectors( vector<double> expected, vector<double> predicted );
 
 
 int main(int argc, char *argv[])
@@ -43,8 +45,11 @@ int main(int argc, char *argv[])
 	char *param_file;					// Parameter file passed in from args
 
 	srand(time(NULL));
+	bool match;
+	double acc = 0;
 
 	//	char *data_file;	// TEMPORARY FOR TESTING
+	int correct = 0;					// number of correctly predicted outputs
 
 	All_Data data;
 	
@@ -89,12 +94,13 @@ int main(int argc, char *argv[])
 
 	vector<double> testVector;
 	vector<double> testOVector;
+	double rms = 1; //must be set to 1 to enter the if statement, which we want at first.
 
 	inputVectorList = create_order(inData.size());
 
 	for (int indextoSkip = 0; indextoSkip < inputVectorList.size(); indextoSkip++)
 	{
-		inputVectorList = create_order(inData.size());
+		//inputVectorList = create_order(inData.size());
 		
 		int indexToWork = inputVectorList[indextoSkip];
 
@@ -123,28 +129,31 @@ int main(int argc, char *argv[])
 			weightsin.close();
 		}
 
-		double rms = 0;
 
 		ofstream weights;
 		weights.open(param_vals.weights_file);
-
-		for (int i = 0; i < inData.size(); i++)
+		if (rms > param_vals.threshold_error)
 		{
-			int pos = inputVectorList[i];
-			//cout << "entered first foor loop" << endl;
-			if (i != indextoSkip)
+	
+			for (int i = 0; i < inData.size(); i++)
 			{
-				//cout << "running condition" << endl;
-				results = net.Run_and_Condition(inData[indexToWork], finalOutput[indexToWork]);
-				//cout << "got results" << endl;
-				for( int k = 0; k < results.size(); k++)
+				int pos = inputVectorList[i];
+				//cout << "entered first foor loop" << endl;
+				if (i != indextoSkip)
 				{
-					rms += pow(results[k] - finalOutput[pos][k], 2.0);
+					//cout << "running condition" << endl;
+					results = net.Run_and_Condition(inData[indexToWork], finalOutput[indexToWork]);
+					//cout << "got results" << endl;
+					for( int k = 0; k < results.size(); k++)
+					{
+						rms += pow(results[k] - finalOutput[pos][k], 2.0);
+					}
 				}
 			}
+			rms = sqrt(rms/(inData.size()*results.size()));
 		}
-		rms = sqrt(rms/(inData.size()*results.size()));
-		cout <<"\tRMS: "<< rms << endl;
+
+		//cout <<"\tRMS: "<< rms << endl;
 		
 		results = net.Run(testVector);
 	
@@ -159,20 +168,68 @@ int main(int argc, char *argv[])
 		}
 
 		cout << "Year: " << "\tExpected: " << testOVector[0] << testOVector[1] << testOVector[2];
-		cout << " Predicted: " << results[0] << results[1] << results[2] << endl;
+		cout << " Predicted: " << results[0] << results[1] << results[2];
+
+		match = compare_vectors(testOVector, results );
+
+		if( !match )
+			cout << "*" << endl;
+		else
+		{
+			cout << endl;
+			correct++;
+		}
 
 		net.Save_network(weights);
+
+
 
 		
 
 		weights.close();
 
-	}	
+	}
+		acc = accuracy( correct, inData.size() );
+		acc = acc*100;
+
+		cout << "Accuracy is: " << setprecision(4)  << acc << "%" << endl;	
 	
 	
 	return 0;
 }
+/******************************************************************************
+Function:	 accuracy
+Author: 	 Stephanie Athow
+Description: 
+	calculate accuracy of number of correct predictions
+******************************************************************************/
+double accuracy( int correct, int total )
+{
+	double accuracy = (double) correct / (double) total;
+	
+	return accuracy;
+}
+/******************************************************************************
+Function:	 compare vectors
+Author: 	 Stephanie Athow
+Description: 
+	compare two vectors to see if they are the same.
+Returns:
+	true 	vectors are the same
+	false 	vectors are different
+******************************************************************************/
+bool compare_vectors( vector<double> expected, vector<double> predicted )
+{
+	if( expected.size() != predicted.size() )
+		return false; 
+	for( int i = 0; i < expected.size() ; i++ )
+	{
+		if( expected[i] != (int) predicted[i] )
+			return false;
+	}
 
+	return true;
+}
 /*
 	testing file parsing for pdsi
 */
@@ -194,8 +251,10 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
 	vector<vector<double>> output;
 	vector<double> outputSingle;
-	for (int i = 0; i < data.size(); i++)
+	int yearsOffset = max(param_vals.years_burned_acres, (param_vals.pdsi_months/12));
+	for (int i = yearsOffset; i < data.size(); i++)
 	{
+		outputSingle.clear();
 		if (data[i][1] < param_vals.norm_threshold_low)
 		{
 			outputSingle.push_back(1);
