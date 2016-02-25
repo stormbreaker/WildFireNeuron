@@ -84,14 +84,18 @@ int main(int argc, char *argv[])
 	vector<int> inputVectorList;
 
 	vector<double> testVector;
+	vector<double> testOVector;
 
 	for (int indextoSkip = 0; indextoSkip < inputVectorList.size(); indextoSkip++)
 	{
 		inputVectorList = create_order(finalOutput.size());
+		
 
 		//assign the testing vector as the vector from inData with the index which has the same 
 		// value as the value in inputVectorList which is indexed by indextoSkip
 		testVector = inData[inputVectorList[indextoSkip]];
+		testOVector = finalOutput[inputVectorList[indextoSkip]];
+
 
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
 		
@@ -126,7 +130,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		
-		net.Run(testVector);
+		results = net.Run(testVector);
 
 		net.Save_network(weights);
 
