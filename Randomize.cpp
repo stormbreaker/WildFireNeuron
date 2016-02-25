@@ -9,7 +9,6 @@ Description:
 ******************************************************************************/
 #include "Randomize.h"
 
-
 /*******************************************************************************
 Function:	Randomize
 Author:		Marcus Haberline
@@ -20,7 +19,7 @@ Parameters:
 Returns:
 	none
 *******************************************************************************/
-/*
+
 vector<int> create_order( int number_of_records )
 {
     vector<int> in_order;
@@ -39,7 +38,7 @@ vector<int> create_order( int number_of_records )
     }
 	return to_return;
 }
-*/
+
 
 /*******************************************************************************
 Function:	Randomize

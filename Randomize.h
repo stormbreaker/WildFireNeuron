@@ -21,7 +21,7 @@ Description:
 using namespace std;
 
 
-//vector<int> create_order( int number_of_records );
+vector<int> create_order( int number_of_records );
 
 // Randomizes order of a vector of vectors, but not the contents of the second
 // vector 
