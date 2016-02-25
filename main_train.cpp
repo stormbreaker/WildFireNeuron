@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 	{
 		run_order = create_order( inData.size());
 		//need to re-randomize
-		cout << "Epoch: " << i+1;
+
 		double rms = 0;
 		for (int j = 0; j < inData.size(); j++) //the idea is here but the
 		{
@@ -149,9 +149,11 @@ int main(int argc, char *argv[])
 			{
 				rms += pow(results[k] - finalOutput[pos][k], 2.0);
 			}
+			cout << endl;
 		}
 		rms = sqrt(rms/(inData.size()*results.size()));
-		cout <<"\tRMS: "<< rms << endl;
+		if( (i+1)%10 == 0 )
+		cout << "Epoch: " << i+1 <<"\tRMS: "<< rms << endl;
 	}
 	net.Save_network(weights);
 
