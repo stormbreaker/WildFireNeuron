@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 	{
 		run_order = create_order( inData.size());
 		//need to re-randomize
-		cout << "Epoch: " << i+1;
+
 		double rms = 0;
 		for (int j = 0; j < inData.size(); j++) //the idea is here but the
 		{
@@ -149,9 +149,11 @@ int main(int argc, char *argv[])
 			{
 				rms += pow(results[k] - finalOutput[pos][k], 2.0);
 			}
+			cout << endl;
 		}
 		rms = sqrt(rms/(inData.size()*results.size()));
-		cout <<"\tRMS: "<< rms << endl;
+		if( (i+1)%10 == 0 )
+		cout << "Epoch: " << i+1 <<"\tRMS: "<< rms << endl;
 	}
 	net.Save_network(weights);
 
@@ -197,7 +199,8 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
 	vector<vector<double>> output;
 	vector<double> outputSingle;
-	for (int i = 0; i < data.size(); i++)
+	int yearsOffset = max(param_vals.years_burned_acres, (param_vals.pdsi_months/12));
+	for (int i = yearsOffset; i < data.size(); i++)
 	{
 		outputSingle.clear();
 		if (data[i][1] < param_vals.norm_threshold_low)

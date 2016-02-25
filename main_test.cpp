@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 		results = net.Run(inputData[j]);
 		for( int i = 0; i < results.size(); i++ )
 		{
-			expected.push_back( (int) expectedOutput[j+yearOffset][i] );
+			expected.push_back( (int) expectedOutput[j][i] );
 		}
 
 		for( int z = 0; z < results.size(); z++ )
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 			else
 				results[z] = 0;
 		}
-		cout << "Year: " << data[j+yearOffset][0] << "\t Expected: " << expectedOutput[j+yearOffset][0] << expectedOutput[j+yearOffset][1] << expectedOutput[j+yearOffset][2];
+		cout << "Year: " << data[j+yearOffset][0] << "\t Expected: " << expectedOutput[j][0] << expectedOutput[j][1] << expectedOutput[j][2];
 
 		cout << " \t Predicted: " << results[0] << results[1] << results[2];
 
@@ -227,7 +227,8 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
 	vector<vector<double>> output;
 	vector<double> outputSingle;
-	for (int i = 0; i < data.size(); i++)
+	int yearsOffset = max(param_vals.years_burned_acres, (param_vals.pdsi_months/12));
+	for (int i = yearsOffset; i < data.size(); i++)
 	{
 		outputSingle.clear();
 		if (data[i][1] < param_vals.norm_threshold_low)
