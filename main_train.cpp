@@ -199,7 +199,8 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
 	vector<vector<double>> output;
 	vector<double> outputSingle;
-	for (int i = 0; i < data.size(); i++)
+	int yearsOffset = max(param_vals.years_burned_acres, (param_vals.pdsi_months/12));
+	for (int i = yearsOffset; i < data.size(); i++)
 	{
 		outputSingle.clear();
 		if (data[i][1] < param_vals.norm_threshold_low)

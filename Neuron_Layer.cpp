@@ -325,7 +325,7 @@ void Neuron_Layer::Attach( int nodes )
             to_add.resize(num_nodes);
             for( unsigned int y = 0; y < to_add.size(); y++ )
             {
-                to_add.at(y) = (rand()%1000)/5000.0;
+                to_add.at(y) = (rand()%1000)/5000.0 - .1;
             }
             next_layer -> input_weights.push_back(to_add);
 			next_layer -> prev_weights.push_back(to_add);
@@ -401,5 +401,5 @@ Paramaters: t - the sum of results*weights to use in the activation function.
 ******************************************************************************/
 double Neuron_Layer::Log_sigmoid(double t)
 {
-    return 1 / (1 + exp(-1 * t));
+    return 1 / (1 + exp(-3 * t));
 }
