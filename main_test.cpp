@@ -46,6 +46,11 @@ int main(int argc, char *argv[])
 	char *param_file;					// Parameter file passed in from args
 	vector<double> results;
 
+	bool match;							// check for if expected out matches predicted out
+	double acc = 0;						// accuracy
+
+	int correct = 0;					// number of correctly predicted outputs
+
 	All_Data data;
 	All_Data data_wo_yr;
 
@@ -105,22 +110,16 @@ int main(int argc, char *argv[])
 
 	int yearOffset = max( param_vals.years_burned_acres, (param_vals.pdsi_months/12) );
 
-	cout << "input data size is: " << inputData.size() << endl;
-
 	// run input vectors through net
 	for (int j = 0; j < inputData.size(); j++ )
 	{
-	//	cout << "J is: " << j << " data is: " << inputData[j][0] << endl;
-
 		vector<int> expected;
 
 		results = net.Run(inputData[j]);
-
 		for( int i = 0; i < results.size(); i++ )
 		{
 			expected.push_back( (int) expectedOutput[j+yearOffset][i] );
 		}
-//		cout << "size of expected is: " << expected.size();
 
 		for( int z = 0; z < results.size(); z++ )
 		{
@@ -134,15 +133,22 @@ int main(int argc, char *argv[])
 
 		cout << " \t Predicted: " << results[0] << results[1] << results[2];
 
-		bool match;
 		match = compare_vectors( expected, results );
 
 		if( !match )
 			cout << "*" << endl;
 		else
+		{
 			cout << endl;
-
+			correct++;
+		}
 	}
+
+	
+	acc = accuracy( correct, inputData.size() );
+	acc = acc*100;
+
+	cout << "Accuracy is: " << setprecision(4)  << acc << "%" << endl;
 
 	weightsin.close();
 	return 0;
@@ -175,8 +181,7 @@ bool compare_vectors( vector<int> expected, vector<double> predicted )
 {
 	if( expected.size() != predicted.size() )
 		return false; 
-
-	for( int i = 0; i < expected.size() +1; i++ )
+	for( int i = 0; i < expected.size() ; i++ )
 	{
 		if( expected[i] != (int) predicted[i] )
 			return false;
