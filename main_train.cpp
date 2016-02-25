@@ -19,6 +19,8 @@ Feb 6, 2016			Finished code for neural network file I/O
 #include <vector>
 #include <fstream>
 #include <string>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>
 
 #include "Parse_Files.h"
 #include "Neuron_Layer.h"
@@ -40,6 +42,7 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals);
 
 int main(int argc, char *argv[])
 {
+	srand(time(NULL));
 	char *param_file;					// Parameter file passed in from args
 	vector<double> results;
 
@@ -81,16 +84,6 @@ int main(int argc, char *argv[])
 
 	All_Data inData;
 	inData = genInputVector(data, param_vals);
-
-	//output_data(test);
-
-//	printf( "after normalization: \n" );
-//	output_data( data );
-
-	// randomize data
-	randomize( data );
-//	printf("after randomization: \n" );
-	//output_data( data );
 
 	cout << "randomized" << endl;
 	All_Data finalOutput;
@@ -140,20 +133,26 @@ int main(int argc, char *argv[])
 
 	ofstream weights;
 	weights.open(param_vals.weights_file);
+	vector<int> run_order;
 	for (int i = 0; i < param_vals.epochs; i++)
 	{
+		run_order = create_order( inData.size());
 		//need to re-randomize
-		cout << "entered first foor loop" << endl;
-
+		cout << "Epoch: " << i+1;
+		double rms = 0;
 		for (int j = 0; j < inData.size(); j++) //the idea is here but the
 		{
-			cout << "running condition" << endl;
-			results = net.Run_and_Condition(inData[j], finalOutput[j]);
-			cout << "got results" << endl;
+			int pos = run_order[j];
+			results = net.Run_and_Condition(inData[pos], finalOutput[pos]);
+		
+			for( int k = 0; k < results.size(); k++)
+			{
+				rms += pow(results[k] - finalOutput[pos][k], 2.0);
+			}
 		}
-		//we need to save the weight
+		rms = sqrt(rms/(inData.size()*results.size()));
+		cout <<"\tRMS: "<< rms << endl;
 	}
-	cout << "after for loop" << endl;
 	net.Save_network(weights);
 
 	weights.close();
