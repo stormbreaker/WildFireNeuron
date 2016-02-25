@@ -86,9 +86,11 @@ int main(int argc, char *argv[])
 	vector<double> testVector;
 	vector<double> testOVector;
 
+	inputVectorList = create_order(inData.size());
+
 	for (int indextoSkip = 0; indextoSkip < inputVectorList.size(); indextoSkip++)
 	{
-		inputVectorList = create_order(finalOutput.size());
+		//inputVectorList = create_order(inData.size());
 		
 		int indexToWork = inputVectorList[indextoSkip];
 
@@ -117,19 +119,28 @@ int main(int argc, char *argv[])
 			weightsin.close();
 		}
 
+		double rms = 0;
+
 		ofstream weights;
 		weights.open(param_vals.weights_file);
 
 		for (int i = 0; i < inData.size(); i++)
 		{
-			cout << "entered first foor loop" << endl;
+			int pos = inputVectorList[i];
+			//cout << "entered first foor loop" << endl;
 			if (i != indextoSkip)
 			{
-				cout << "running condition" << endl;
+				//cout << "running condition" << endl;
 				results = net.Run_and_Condition(inData[indexToWork], finalOutput[indexToWork]);
-				cout << "got results" << endl;
+				//cout << "got results" << endl;
+				for( int k = 0; k < results.size(); k++)
+				{
+					rms += pow(results[k] - finalOutput[pos][k], 2.0);
+				}
 			}
 		}
+		rms = sqrt(rms/(inData.size()*results.size()));
+		cout <<"\tRMS: "<< rms << endl;
 		
 		results = net.Run(testVector);
 

@@ -3,3 +3,4 @@ ANNtrain
 ANNtest
 CrossValidate
 *.wts
+*.swp
