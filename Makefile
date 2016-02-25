@@ -39,10 +39,10 @@ all:   ANNtrain ANNtest CrossValidate
 ANNtrain:	main_train.o Parse_Files.o Neuron_Layer.o Normalization.o Randomize.o
 	$(LINK) -o $@ $^ 
 
-ANNtest:	main_test.o Parse_Files.o Neuron_Layer.o
+ANNtest:	main_test.o Parse_Files.o Neuron_Layer.o Normalization.o Randomize.o
 	$(LINK) -o $@ $^
 
-CrossValidate: main_cross_validate.o Parse_Files.o Neuron_Layer.o
+CrossValidate: main_cross_validate.o Parse_Files.o Neuron_Layer.o Normalization.o Randomize.o
 	$(LINK) -o $@ $^
 
 # generic C and C++ targets for OpenGL programs consisting of only one file
