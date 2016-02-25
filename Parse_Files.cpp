@@ -149,7 +149,6 @@ void parse_param( char* param_file, Parameters *param_vals )
 			// read in number of nodes per layer
 			case 6:
 				sub_line2 = line;
-				cout << "line is: " << line << endl;
 				for( int i = 0; i < param_vals->adjustable_weight_layers +1; i++ )
 				{
 					pos = sub_line2.find( " " );

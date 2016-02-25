@@ -45,8 +45,6 @@ int main(int argc, char *argv[])
 	char *param_file;					// Parameter file passed in from args
 	vector<double> results;
 
-//	char *data_file;	// TEMPORARY FOR TESTING
-
 	All_Data data;
 	All_Data data_wo_yr;
 
@@ -63,102 +61,74 @@ int main(int argc, char *argv[])
 	else
 	{
 		param_file = argv[1];
-		// TEMPORARY FOR TESTING
-		//data_file = argv[1];
 	}
 
 	// parse parameter file
 	parse_param( param_file, &param_vals );
 
 	// parse PDSI csv file
-//	cout<< "Data file name: " << param_vals.data_file << endl;
 	parse_csv( param_vals.data_file, data );
-
-	// check correct reading of PDSI info
-	//	output_data( data );
 
 	// normalize data
 	normalize_pdsi( data );
 	normalize_burned_acres( data, &param_vals );
 
-	All_Data inData;
-	inData = genInputVector(data, param_vals);
+	All_Data inputData;
+	inputData = genInputVector( data, param_vals );
 
-	//output_data(test);
+	All_Data expectedOutput;
+	expectedOutput = genOutputVector(data, param_vals);
 
-//	printf( "after normalization: \n" );
-//	output_data( data );
-
-	// randomize data
-	randomize( data );
-//	printf("after randomization: \n" );
-	//output_data( data );
-
-	cout << "randomized" << endl;
-	All_Data finalOutput;
-	cout << "declared final outvec" << endl;
-	finalOutput = genOutputVector(data, param_vals);
-	cout << "assigned final" << endl;
-
-	output_data(finalOutput);
-
-	//removeYears(data, data_wo_yr);
-	cout << "removed years" << endl;
-
-	//processing of net
-	    for ( int x  = 0; x < param_vals.adjustable_weight_layers + 1; x++ )
-        {
-            cout << "Layer " << x << "\t Nodes: " << param_vals.nodes_per_layer[x] << endl;
-        }
-
-		//creating
-		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
+	//create ANN
+	Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
 		
-
-		cout << "made head layer" << endl;
-		for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
-		{
-			/*Neuron_Layer* layerpt;
-			Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
-			layerpt = &layer;
-			*/
-			net.Attach(param_vals.nodes_per_layer[i]);
-		}
-        //net.Attach(3); //Output Layer
-
-		ifstream weightsin;
-		weightsin.open(param_vals.weights_file);
-		if (weightsin.is_open())
-		{
-			net.Load_network(weightsin);
-		}
-
-	cout << "BUILT NET" << endl;
-	
-	//at this point the net should be constructed
-
-	//everything I wrote here needs to be looped
-
-
-	ofstream weights;
-	weights.open(param_vals.weights_file);
-	for (int i = 0; i < param_vals.epochs; i++)
+	for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
 	{
-		//need to re-randomize
-		cout << "entered first foor loop" << endl;
-
-		for (int j = 0; j < inData.size(); j++ )
-		{
-			cout << "running condition" << endl;
-			results = net.Run(inData[j]);
-			cout << "got results" << endl;
-		}
-		//we need to save the weight
+		net.Attach(param_vals.nodes_per_layer[i]);
 	}
-	cout << "after for loop" << endl;
-	net.Save_network(weights);
 
-	weights.close();
+	// open weights file
+	ifstream weightsin;
+	weightsin.open(param_vals.weights_file);
+
+	// if open, load weights
+	if (weightsin.is_open())
+	{
+		net.Load_network(weightsin);
+	}
+	else
+	{
+		cout << "Could not open weights file. Exiting." << endl;
+		return -1;
+	}
+
+	int yearOffset = max( param_vals.years_burned_acres, (param_vals.pdsi_months/12) );
+
+	cout << "input data size is: " << inputData.size() << endl;
+
+	// run input vectors through net
+	for (int j = 0; j < inputData.size(); j++ )
+	{
+		cout << "J is: " << j << " data is: " << inputData[j][0] << endl;
+
+		results = net.Run(inputData[j]);
+
+		for( int z = 0; z < results.size(); z++ )
+		{
+			cout << " Results are: " << results[z];
+
+			if( results[z] > 0.5 )
+				results[z] = 1;
+			else
+				results[z] = 0;
+		}
+		//cout << "Year: " << data[j+yearOffset][0] << "\t Expected: " << expectedOutput[j+yearOffset][0] << expectedOutput[j+yearOffset][1] << expectedOutput[j+yearOffset][2];
+
+
+		cout << " \t Predicted: " << results[0] << results[1] << results[2] << endl;
+	}
+
+	weightsin.close();
 	return 0;
 
 }
@@ -215,6 +185,7 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 	vector<double> outputSingle;
 	for (int i = 0; i < data.size(); i++)
 	{
+		outputSingle.clear();
 		if (data[i][1] < param_vals.norm_threshold_low)
 		{
 			outputSingle.push_back(1);
@@ -263,6 +234,7 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 	for (int j = yearsOffset; j < data.size(); j++)
 	{
 		monthCounter = 0;
+		inputVector.clear();
 
 		//get burned acres to put in input vector
 		for (int i = 0; i < param_vals.years_burned_acres; i++)
