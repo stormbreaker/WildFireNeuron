@@ -19,6 +19,8 @@ Feb 6, 2016			Finished code for neural network file I/O
 #include <vector>
 #include <fstream>
 #include <string>
+#include <time.h>
+#include <stdlib.h>
 
 #include "Randomize.h"
 #include "Parse_Files.h"
@@ -39,6 +41,8 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals);
 int main(int argc, char *argv[])
 {
 	char *param_file;					// Parameter file passed in from args
+
+	srand(time(NULL));
 
 	//	char *data_file;	// TEMPORARY FOR TESTING
 
@@ -90,7 +94,7 @@ int main(int argc, char *argv[])
 
 	for (int indextoSkip = 0; indextoSkip < inputVectorList.size(); indextoSkip++)
 	{
-		//inputVectorList = create_order(inData.size());
+		inputVectorList = create_order(inData.size());
 		
 		int indexToWork = inputVectorList[indextoSkip];
 
@@ -102,7 +106,7 @@ int main(int argc, char *argv[])
 
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
 		
-		cout << "made head layer" << endl;
+		//cout << "made head layer" << endl;
 
 		for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
 		{
@@ -143,8 +147,23 @@ int main(int argc, char *argv[])
 		cout <<"\tRMS: "<< rms << endl;
 		
 		results = net.Run(testVector);
+	
+
+		for( int z = 0; z < results.size(); z++ )
+		{
+
+			if( results[z] > 0.5 )
+				results[z] = 1;
+			else
+				results[z] = 0;
+		}
+
+		cout << "Year: " << "\tExpected: " << testOVector[0] << testOVector[1] << testOVector[2];
+		cout << " Predicted: " << results[0] << results[1] << results[2] << endl;
 
 		net.Save_network(weights);
+
+		
 
 		weights.close();
 
@@ -226,7 +245,7 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 	for (int j = yearsOffset; j < data.size(); j++)
 	{
 		monthCounter = 0;
-
+		inputVector.clear();
 		//get burned acres to put in input vector
 		for (int i = 0; i < param_vals.years_burned_acres; i++)
 		{
