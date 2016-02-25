@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 			{
 				rms += pow(results[k] - finalOutput[pos][k], 2.0);
 			}
-			cout << endl;
+		
 		}
 		rms = sqrt(rms/(inData.size()*results.size()));
 		if( (i+1)%10 == 0 )
