@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	bool match;
 	double acc = 0;
 
-	//	char *data_file;	// TEMPORARY FOR TESTING
+
 	int correct = 0;					// number of correctly predicted outputs
 
 	All_Data data;
@@ -68,8 +68,6 @@ int main(int argc, char *argv[])
 	else
 	{
 		param_file = argv[1];
-		// TEMPORARY FOR TESTING
-		//data_file = argv[1];
 	}
 
 	// parse parameter file
@@ -79,10 +77,6 @@ int main(int argc, char *argv[])
 	cout<< "Data file name: " << param_vals.data_file << endl;
 	parse_csv( param_vals.data_file, data );
 
-	// check correct reading of PDSI info
-	//	output_data( data );
-
-	//pull one out, train, test
 
 	All_Data inData;
 	inData = genInputVector(data, param_vals);
@@ -100,7 +94,6 @@ int main(int argc, char *argv[])
 
 	for (int indextoSkip = 0; indextoSkip < inputVectorList.size(); indextoSkip++)
 	{
-		//inputVectorList = create_order(inData.size());
 		
 		int indexToWork = inputVectorList[indextoSkip];
 
@@ -112,7 +105,6 @@ int main(int argc, char *argv[])
 
 		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
 		
-		//cout << "made head layer" << endl;
 
 		for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
 		{
@@ -138,12 +130,9 @@ int main(int argc, char *argv[])
 			for (int i = 0; i < inData.size(); i++)
 			{
 				int pos = inputVectorList[i];
-				//cout << "entered first foor loop" << endl;
 				if (i != indextoSkip)
 				{
-					//cout << "running condition" << endl;
 					results = net.Run_and_Condition(inData[indexToWork], finalOutput[indexToWork]);
-					//cout << "got results" << endl;
 					for( int k = 0; k < results.size(); k++)
 					{
 						rms += pow(results[k] - finalOutput[pos][k], 2.0);
@@ -153,7 +142,7 @@ int main(int argc, char *argv[])
 			rms = sqrt(rms/(inData.size()*results.size()));
 		}
 
-		//cout <<"\tRMS: "<< rms << endl;
+		//cout <<"\tRMS: "<< rms << endl; //This could be uncommented to check the RMS if necessary
 		
 		results = net.Run(testVector);
 	
@@ -230,9 +219,15 @@ bool compare_vectors( vector<double> expected, vector<double> predicted )
 
 	return true;
 }
-/*
-	testing file parsing for pdsi
-*/
+/******************************************************************************
+Function:	 output_data
+Author: 	 Stephanie Athow
+Description: 
+	This function takes a 2D vector of doubles and prints it out.  This was
+	used for error checking/debugging
+Returns:
+	nothing.  This is a void function strictly for output.  
+******************************************************************************/
 void output_data( const All_Data& data )
 {
 	for( All_Data::const_iterator row = data.begin(); row != data.end(); ++row )
@@ -243,10 +238,19 @@ void output_data( const All_Data& data )
 	}
 }
 
-/*
-	Author: Benjamin Kaiser
-*/
-
+/******************************************************************************
+Function:	 genOutputVector
+Author: 	 Benjamin Kaiser
+Description: 
+	This function takes a 2D vector of doubles and the parameter structure which
+	was created for generating a complete vector of vectors.  These inner
+	vectors are the individual expected output vectors for the net.  
+	It uses the threshold values which have been previously normalized
+	in the parameters struct to determin if it should generate a vector of
+	<1,0,0>, <0,1,0>, or <0,0,1>.  These are low, medium, and high respectively
+Returns:
+	output:  a 2D vector of doubles.    
+******************************************************************************/
 vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
 	vector<vector<double>> output;
@@ -279,9 +283,20 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 }
 
 
-/*
-	Author: Benjamin Kaiser
-*/
+/******************************************************************************
+Function:	 genInputVector
+Author: 	 Benjamin Kaiser
+Description: 
+	This function takes a 2D vector of doubles and the parameter structure which
+	was created for generating a complete vector of vectors.  These inner
+	vectors are the individual input vectors for the net.  They use the
+	parameter struct and the data from that to determine how to construct the
+	input vector.  This includes calculating the year offset and the number of
+	years of burned acres as well as the number of months of PDSI data.  It
+	then concatenates these into the final input vector.  
+Returns:
+	output:  a 2D vector of doubles.    
+******************************************************************************/
 vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 {
 	int dataStartYear = data[0][0];

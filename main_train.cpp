@@ -34,7 +34,7 @@ typedef vector<double> Year;			// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 void output_data( const All_Data& data );
-void removeYears(const All_Data& data, All_Data& data_wo_yr);
+
 
 vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals);
 vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals);
@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
 	char *param_file;					// Parameter file passed in from args
 	vector<double> results;
 
-//	char *data_file;	// TEMPORARY FOR TESTING
 
 	All_Data data;
 	All_Data data_wo_yr;
@@ -64,19 +63,14 @@ int main(int argc, char *argv[])
 	else
 	{
 		param_file = argv[1];
-		// TEMPORARY FOR TESTING
-		//data_file = argv[1];
 	}
 
 	// parse parameter file
 	parse_param( param_file, &param_vals );
 
 	// parse PDSI csv file
-//	cout<< "Data file name: " << param_vals.data_file << endl;
 	parse_csv( param_vals.data_file, data );
 
-	// check correct reading of PDSI info
-	//	output_data( data );
 
 	// normalize data
 	normalize_pdsi( data );
@@ -91,43 +85,25 @@ int main(int argc, char *argv[])
 	finalOutput = genOutputVector(data, param_vals);
 
 
-	output_data(finalOutput);
-
-	//removeYears(data, data_wo_yr);
-
-	//processing of net
-	    for ( int x  = 0; x < param_vals.adjustable_weight_layers + 1; x++ )
-        {
-            cout << "Layer " << x << "\t Nodes: " << param_vals.nodes_per_layer[x] << endl;
-        }
-
-		//creating
-		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
+	//creating
+	Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
 		
 
-		cout << "made head layer" << endl;
-		for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
-		{
-			/*Neuron_Layer* layerpt;
-			Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
-			layerpt = &layer;
-			*/
-			net.Attach(param_vals.nodes_per_layer[i]);
-		}
-        //net.Attach(3); //Output Layer
+	for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
+	{
+		net.Attach(param_vals.nodes_per_layer[i]);
+	}
 
-		ifstream weightsin;
-		weightsin.open(param_vals.weights_file);
-		if (weightsin.is_open())
-		{
-			net.Load_network(weightsin);
-		}
+	ifstream weightsin;
+	weightsin.open(param_vals.weights_file);
+	if (weightsin.is_open())
+	{
+		net.Load_network(weightsin);
+	}
 
 
 	
 	//at this point the net should be constructed
-
-	//everything I wrote here needs to be looped
 
 
 	ofstream weights;
@@ -138,10 +114,9 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < param_vals.epochs && rms > param_vals.threshold_error ; i++)
 	{
 		run_order = create_order( inData.size());
-		//need to re-randomize
 
         rms = 0;
-		for (int j = 0; j < inData.size(); j++) //the idea is here but the
+		for (int j = 0; j < inData.size(); j++)
 		{
 			int pos = run_order[j];
 			results = net.Run_and_Condition(inData[pos], finalOutput[pos]);
@@ -163,40 +138,40 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-/*
-	Author: Stephanie Athow
-	testing file parsing for pdsi
-*/
+/******************************************************************************
+Function:	 output_data
+Author: 	 Stephanie Athow
+Description: 
+	This function takes a 2D vector of doubles and prints it out.  This was
+	used for error checking/debugging
+Returns:
+	nothing.  This is a void function strictly for output.  
+******************************************************************************/
 void output_data( const All_Data& data )
 {
-	ofstream debug;
-	debug.open("debug.txt");
 	for( All_Data::const_iterator row = data.begin(); row != data.end(); row++ )
 	{
 		for( Year::const_iterator col = row->begin(); col != row->end(); col++ )
-			debug << *col << setw(5) << " ";
-		debug << endl;
-	}
-	debug.close();
-}
-
-/*
-	Author: Benjamin Kaiser
-*/
-void removeYears(const All_Data& data, All_Data& data_wo_yr)
-{
-	for (unsigned int i = 0; i < data.size(); i++)
-	{
-		for (unsigned int j = 1; j < data[i].size(); j++)
-		{
-			data_wo_yr[i][j-1] = data[i][j];
-		}
+			cout << *col << setw(5) << " ";
+		cout << endl;
 	}
 }
 
-/*
-	Author: Benjamin Kaiser
-*/
+
+
+/******************************************************************************
+Function:	 genOutputVector
+Author: 	 Benjamin Kaiser
+Description: 
+	This function takes a 2D vector of doubles and the parameter structure which
+	was created for generating a complete vector of vectors.  These inner
+	vectors are the individual expected output vectors for the net.  
+	It uses the threshold values which have been previously normalized
+	in the parameters struct to determin if it should generate a vector of
+	<1,0,0>, <0,1,0>, or <0,0,1>.  These are low, medium, and high respectively
+Returns:
+	output:  a 2D vector of doubles.    
+******************************************************************************/
 vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
 	vector<vector<double>> output;
@@ -228,9 +203,20 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 	return output;		
 }
 
-/*
-	Author: Benjamin Kaiser
-*/
+/******************************************************************************
+Function:	 genInputVector
+Author: 	 Benjamin Kaiser
+Description: 
+	This function takes a 2D vector of doubles and the parameter structure which
+	was created for generating a complete vector of vectors.  These inner
+	vectors are the individual input vectors for the net.  They use the
+	parameter struct and the data from that to determine how to construct the
+	input vector.  This includes calculating the year offset and the number of
+	years of burned acres as well as the number of months of PDSI data.  It
+	then concatenates these into the final input vector.  
+Returns:
+	output:  a 2D vector of doubles.    
+******************************************************************************/
 vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 {
 	int dataStartYear = data[0][0];

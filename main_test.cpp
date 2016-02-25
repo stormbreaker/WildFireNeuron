@@ -218,10 +218,17 @@ void removeYears(const All_Data& data, All_Data& data_wo_yr)
 }
 
 /******************************************************************************
-Function:	 Generate Output Vector
-Author: 	 Ben Kaiser
+Function:	 genOutputVector
+Author: 	 Benjamin Kaiser
 Description: 
-	Generate a vector with expected output values
+	This function takes a 2D vector of doubles and the parameter structure which
+	was created for generating a complete vector of vectors.  These inner
+	vectors are the individual expected output vectors for the net.  
+	It uses the threshold values which have been previously normalized
+	in the parameters struct to determin if it should generate a vector of
+	<1,0,0>, <0,1,0>, or <0,0,1>.  These are low, medium, and high respectively
+Returns:
+	output:  a 2D vector of doubles.    
 ******************************************************************************/
 vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 {
@@ -254,9 +261,20 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 	return output;		
 }
 
-/*
-	Author: Benjamin Kaiser
-*/
+/******************************************************************************
+Function:	 genInputVector
+Author: 	 Benjamin Kaiser
+Description: 
+	This function takes a 2D vector of doubles and the parameter structure which
+	was created for generating a complete vector of vectors.  These inner
+	vectors are the individual input vectors for the net.  They use the
+	parameter struct and the data from that to determine how to construct the
+	input vector.  This includes calculating the year offset and the number of
+	years of burned acres as well as the number of months of PDSI data.  It
+	then concatenates these into the final input vector.  
+Returns:
+	output:  a 2D vector of doubles.    
+******************************************************************************/
 vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 {
 	int dataStartYear = data[0][0];
