@@ -19,20 +19,25 @@ Feb 6, 2016			Finished code for neural network file I/O
 #include <vector>
 #include <fstream>
 #include <string>
+#include <stdlib.h>
+#include <time.h>
 
 #include "Parse_Files.h"
 #include "Neuron_Layer.h"
+#include "Normalization.h"
+#include "Randomize.h"
 
 using namespace std;
 
 
-typedef vector<double> Year;			// holds values for one year
+typedef vector<double> Year;		// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 double accuracy( int correct, int total );
 void output_data( const All_Data& data );
 void removeYears( const All_Data& data, All_Data& data_wo_yr );
 vector<vector<double>> genOutputVector( All_Data& data, Parameters& param_vals );
+vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals);
 
 
 int main(int argc, char *argv[])
@@ -142,10 +147,10 @@ int main(int argc, char *argv[])
 		//need to re-randomize
 		cout << "entered first foor loop" << endl;
 
-		for (int j = 0; j < inData.size(); j++) //the idea is here but the
+		for (int j = 0; j < inData.size(); j++ )
 		{
 			cout << "running condition" << endl;
-			results = net.Run_and_Condition(inData[j], finalOutput[j]);
+			results = net.Run(inData[j]);
 			cout << "got results" << endl;
 		}
 		//we need to save the weight
@@ -231,4 +236,68 @@ vector<vector<double>> genOutputVector(All_Data& data, Parameters& param_vals)
 		output.push_back(outputSingle);
 	}
 	return output;		
+}
+
+/*
+	Author: Benjamin Kaiser
+*/
+vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
+{
+	int dataStartYear = data[0][0];
+	int currYear = dataStartYear;
+
+	vector<double> temp;
+	vector<vector<double>> finalData;
+
+	int monthCounter;
+
+	int yearsOffset = max(param_vals.years_burned_acres, (param_vals.pdsi_months/12));
+
+	while (currYear - yearsOffset < dataStartYear)
+	{
+		currYear++;
+	};
+	
+	vector<double> inputVector;
+
+	for (int j = yearsOffset; j < data.size(); j++)
+	{
+		monthCounter = 0;
+
+		//get burned acres to put in input vector
+		for (int i = 0; i < param_vals.years_burned_acres; i++)
+		{
+			inputVector.push_back(data[j][1]);
+		}
+
+		//get pdsi data (this logic should be double-checked)
+		int end_month = param_vals.end_month + 1;
+	
+		int k = j;
+
+
+		while (monthCounter < param_vals.pdsi_months)
+		{
+
+			for (int i = end_month; i > 1; i--)
+			{
+				temp.emplace_back(data[k][i]);
+				monthCounter++;
+			}
+			end_month = 13;
+
+			k--;
+
+		}
+		reverse(temp.begin(), temp.end()); // i got the months backwards so now we need to flip them around
+
+		for (int i = 0; i < temp.size(); i++) //concatenate the pdsi into the input vector
+		{
+			inputVector.push_back(temp[i]);
+		}
+
+		finalData.push_back(inputVector);
+
+	}
+	return finalData;
 }
