@@ -248,7 +248,7 @@ vector<vector<double>> genInputVector(All_Data& data, Parameters& param_vals)
 	for (int j = yearsOffset; j < data.size(); j++)
 	{
 		monthCounter = 0;
-
+		inputVector.clear();
 		//get burned acres to put in input vector
 		for (int i = 0; i < param_vals.years_burned_acres; i++)
 		{
