@@ -85,16 +85,15 @@ int main(int argc, char *argv[])
 	All_Data inData;
 	inData = genInputVector(data, param_vals);
 
-	cout << "randomized" << endl;
+
 	All_Data finalOutput;
-	cout << "declared final outvec" << endl;
+
 	finalOutput = genOutputVector(data, param_vals);
-	cout << "assigned final" << endl;
+
 
 	output_data(finalOutput);
 
 	//removeYears(data, data_wo_yr);
-	cout << "removed years" << endl;
 
 	//processing of net
 	    for ( int x  = 0; x < param_vals.adjustable_weight_layers + 1; x++ )
@@ -124,7 +123,7 @@ int main(int argc, char *argv[])
 			net.Load_network(weightsin);
 		}
 
-	cout << "BUILT NET" << endl;
+
 	
 	//at this point the net should be constructed
 
@@ -134,12 +133,14 @@ int main(int argc, char *argv[])
 	ofstream weights;
 	weights.open(param_vals.weights_file);
 	vector<int> run_order;
-	for (int i = 0; i < param_vals.epochs; i++)
+    double rms = 100;
+
+	for (int i = 0; i < param_vals.epochs && rms > param_vals.threshold_error ; i++)
 	{
 		run_order = create_order( inData.size());
 		//need to re-randomize
 
-		double rms = 0;
+        rms = 0;
 		for (int j = 0; j < inData.size(); j++) //the idea is here but the
 		{
 			int pos = run_order[j];
@@ -149,11 +150,12 @@ int main(int argc, char *argv[])
 			{
 				rms += pow(results[k] - finalOutput[pos][k], 2.0);
 			}
-			cout << endl;
+		
 		}
 		rms = sqrt(rms/(inData.size()*results.size()));
-		if( (i+1)%10 == 0 )
+		if( (i+1)%10 == 0 || rms < param_vals.threshold_error )
 		cout << "Epoch: " << i+1 <<"\tRMS: "<< rms << endl;
+
 	}
 	net.Save_network(weights);
 
