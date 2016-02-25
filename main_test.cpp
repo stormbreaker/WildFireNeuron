@@ -34,6 +34,7 @@ typedef vector<double> Year;		// holds values for one year
 typedef vector<Year> All_Data;		// Vector of vectors, contains all PDSI data
 
 double accuracy( int correct, int total );
+bool compare_vectors( vector<int> expected, vector<double> predicted );
 void output_data( const All_Data& data );
 void removeYears( const All_Data& data, All_Data& data_wo_yr );
 vector<vector<double>> genOutputVector( All_Data& data, Parameters& param_vals );
@@ -109,23 +110,38 @@ int main(int argc, char *argv[])
 	// run input vectors through net
 	for (int j = 0; j < inputData.size(); j++ )
 	{
-		cout << "J is: " << j << " data is: " << inputData[j][0] << endl;
+	//	cout << "J is: " << j << " data is: " << inputData[j][0] << endl;
+
+		vector<int> expected;
 
 		results = net.Run(inputData[j]);
 
+		for( int i = 0; i < results.size(); i++ )
+		{
+			expected.push_back( (int) expectedOutput[j+yearOffset][i] );
+		}
+//		cout << "size of expected is: " << expected.size();
+
 		for( int z = 0; z < results.size(); z++ )
 		{
-			cout << " Results are: " << results[z];
 
 			if( results[z] > 0.5 )
 				results[z] = 1;
 			else
 				results[z] = 0;
 		}
-		//cout << "Year: " << data[j+yearOffset][0] << "\t Expected: " << expectedOutput[j+yearOffset][0] << expectedOutput[j+yearOffset][1] << expectedOutput[j+yearOffset][2];
+		cout << "Year: " << data[j+yearOffset][0] << "\t Expected: " << expectedOutput[j+yearOffset][0] << expectedOutput[j+yearOffset][1] << expectedOutput[j+yearOffset][2];
 
+		cout << " \t Predicted: " << results[0] << results[1] << results[2];
 
-		cout << " \t Predicted: " << results[0] << results[1] << results[2] << endl;
+		bool match;
+		match = compare_vectors( expected, results );
+
+		if( !match )
+			cout << "*" << endl;
+		else
+			cout << endl;
+
 	}
 
 	weightsin.close();
@@ -144,6 +160,29 @@ double accuracy( int correct, int total )
 	double accuracy = (double) correct / (double) total;
 	
 	return accuracy;
+}
+
+/******************************************************************************
+Function:	 compare vectors
+Author: 	 Stephanie Athow
+Description: 
+	compare two vectors to see if they are the same.
+Returns:
+	true 	vectors are the same
+	false 	vectors are different
+******************************************************************************/
+bool compare_vectors( vector<int> expected, vector<double> predicted )
+{
+	if( expected.size() != predicted.size() )
+		return false; 
+
+	for( int i = 0; i < expected.size() +1; i++ )
+	{
+		if( expected[i] != (int) predicted[i] )
+			return false;
+	}
+
+	return true;
 }
 
 /******************************************************************************
