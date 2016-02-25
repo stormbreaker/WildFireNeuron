@@ -66,38 +66,96 @@ int main(int argc, char *argv[])
 	parse_param( param_file, &param_vals );
 
 	// parse PDSI csv file
-	cout<< "Data file name: " << param_vals.data_file << endl;
+//	cout<< "Data file name: " << param_vals.data_file << endl;
 	parse_csv( param_vals.data_file, data );
 
 	// check correct reading of PDSI info
+	//	output_data( data );
+
+	// normalize data
+	normalize_pdsi( data );
+	normalize_burned_acres( data, &param_vals );
+
+	All_Data inData;
+	inData = genInputVector(data, param_vals);
+
+	//output_data(test);
+
+//	printf( "after normalization: \n" );
 //	output_data( data );
 
-	removeYears(data, data_wo_yr);
+	// randomize data
+	randomize( data );
+//	printf("after randomization: \n" );
+	//output_data( data );
 
-//load the network
-//processing of net
+	cout << "randomized" << endl;
+	All_Data finalOutput;
+	cout << "declared final outvec" << endl;
+	finalOutput = genOutputVector(data, param_vals);
+	cout << "assigned final" << endl;
 
-	Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals);
-	for (int i = 1; i < param_vals.adjustable_weight_layers; i++)
-	{
-		/*Neuron_Layer* layerpt;
-		Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
-		layerpt = &layer;
-		*/
-		net.Attach(param_vals.nodes_per_layer[i]);
-	}
-	ifstream weights;
-	weights.open(param_vals.weights_file);
-	net.Load_network(weights);
+	output_data(finalOutput);
 
+	//removeYears(data, data_wo_yr);
+	cout << "removed years" << endl;
+
+	//processing of net
+	    for ( int x  = 0; x < param_vals.adjustable_weight_layers + 1; x++ )
+        {
+            cout << "Layer " << x << "\t Nodes: " << param_vals.nodes_per_layer[x] << endl;
+        }
+
+		//creating
+		Neuron_Layer net = Neuron_Layer(param_vals.nodes_per_layer[0], param_vals); //head layer
+		
+
+		cout << "made head layer" << endl;
+		for (int i = 1; i < param_vals.adjustable_weight_layers + 1; i++)
+		{
+			/*Neuron_Layer* layerpt;
+			Neuron_Layer layer = Neuron_Layer(param_vals.nodes_per_layer[i]);
+			layerpt = &layer;
+			*/
+			net.Attach(param_vals.nodes_per_layer[i]);
+		}
+        //net.Attach(3); //Output Layer
+
+		ifstream weightsin;
+		weightsin.open(param_vals.weights_file);
+		if (weightsin.is_open())
+		{
+			net.Load_network(weightsin);
+		}
+
+	cout << "BUILT NET" << endl;
+	
 	//at this point the net should be constructed
-	/*
-	for (int j = 0; j < data_wo_yr.size(); j++); //the idea is here but the actual code is wrong
+
+	//everything I wrote here needs to be looped
+
+
+	ofstream weights;
+	weights.open(param_vals.weights_file);
+	for (int i = 0; i < param_vals.epochs; i++)
 	{
-		results = net.Run(data_wo_yr[j])
+		//need to re-randomize
+		cout << "entered first foor loop" << endl;
+
+		for (int j = 0; j < inData.size(); j++) //the idea is here but the
+		{
+			cout << "running condition" << endl;
+			results = net.Run_and_Condition(inData[j], finalOutput[j]);
+			cout << "got results" << endl;
+		}
+		//we need to save the weight
 	}
-	*/
+	cout << "after for loop" << endl;
+	net.Save_network(weights);
+
+	weights.close();
 	return 0;
+
 }
 
 /******************************************************************************
